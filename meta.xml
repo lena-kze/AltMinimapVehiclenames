@@ -1,6 +1,6 @@
 <root>
    <id>com.github.lena.altminimapvehiclenames</id>
-   <version>1.1.0</version>
+   <version>1.1.1</version>
    <name>AltMinimapVehiclenames</name>
    <description>Zeigt Fahrzeugnamen auf der Minimap an, abhängig von der Alt-Taste. Eigene Einstellungsseite (Teamgruppen-Verhalten + Sprache).</description>
    <author>Lena_Kze</author>
