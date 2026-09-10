@@ -60,7 +60,7 @@ check("Code-Tokens in DE vorhanden", used_tokens <= set(de))
 check("Code-Tokens in EN vorhanden", used_tokens <= set(en))
 
 # Konkrete Kernwerte.
-check("modname DE", de.get("modname") == "AltMinimapVehiclenamesLena")
+check("modname DE", de.get("modname") == "AltMinimapVehiclenames")
 check("option.hide-on-alt DE == 'Bei ALT verstecken'",
       de.get("option.hide-on-alt") == "Bei ALT verstecken")
 check("option.hide-on-alt EN == 'Hide on ALT'",
@@ -82,7 +82,8 @@ check("squad-names-no-alt.header EN",
       en.get("squad-names-no-alt.header") == "Squad member label variable Without ALT")
 check("squad-names-alt.header EN",
       en.get("squad-names-alt.header") == "Squad member label variable With ALT key")
-check("credits DE", de.get("credits.label") == "Von Lena_Kze in Deutschland erstellt. <3")
+check("credits DE", de.get("credits.label") == "Von Lena_Kze in Deutschland gemacht. <3")
+check("mark-enemy-squads DE", de.get("mark-enemy-squads.header") == "Gegnerische Züge auf Minimap mit * markieren")
 
 print("")
 if fails:

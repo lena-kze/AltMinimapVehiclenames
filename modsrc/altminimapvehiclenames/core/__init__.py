@@ -83,6 +83,9 @@ def _squadDisplayedName(info, isDown):
     if info.get('isForeignSquad'):
         if info.get('isEnemy') and g_configParams.markEnemySquads():
             return info['vehicleName'] + '*'
+        return info['vehicleName']
+    if not info.get('isOwnSquad'):
+        return info['vehicleName']
     if _squadNameContent(isDown) == SquadNameContent.VEHICLE:
         return info['vehicleName']
     return info['playerName']
@@ -165,6 +168,14 @@ def _applySquadNames(plugin, isDown):
         if info is None or not info.get('isSquad'):
             continue
         try:
+            if info.get('isForeignSquad'):
+                if g_configParams.markEnemySquads():
+                    plugin._invoke(entry.getID(), 'setVehicleInfo', vehicleID,
+                                 info['classTag'], _squadDisplayedName(info, isDown),
+                                 info['guiPropsName'], '')
+                continue
+            if not info.get('isOwnSquad'):
+                continue
             if mode == TeamNamesMode.NEVER:
                 plugin._invoke(entry.getID(), 'hideVehicleName')
                 continue
@@ -297,6 +308,7 @@ def _patched_setVehicleInfo(self, vehicleID, entry, vInfo, guiProps, isSpotted=F
         info = {
             'isSquad': isSquad,
             'isEnemy': isEnemy,
+            'isOwnSquad': isSquad and not isEnemy,
             'isForeignSquad': isSquad and isEnemy,
             'classTag': vInfo.vehicleType.classTag,
             'guiPropsName': self._getGuiPropsName(guiProps),
@@ -305,7 +317,11 @@ def _patched_setVehicleInfo(self, vehicleID, entry, vInfo, guiProps, isSpotted=F
         }
         _vehInfo[vehicleID] = info
         _applyEntryNameVisibility(self, entry, _altDown, info)
-        if isSquad and not _altDown and _squadMode() in (
+        if isSquad and isEnemy and g_configParams.markEnemySquads():
+            self._invoke(entry.getID(), 'setVehicleInfo', vehicleID,
+                         info['classTag'], _squadDisplayedName(info, _altDown),
+                         info['guiPropsName'], '')
+        elif info['isOwnSquad'] and not _altDown and _squadMode() in (
                 TeamNamesMode.ALWAYS, TeamNamesMode.HIDE_ON_ALT):
             # ohne Alt: sofort den gewaehlten Namen (squad-names-no-alt) zeigen
             self._invoke(entry.getID(), 'setVehicleInfo', vehicleID,

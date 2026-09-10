@@ -1,5 +1,5 @@
 {
-  "modname": "AltMinimapVehiclenamesLena",
+  "modname": "AltMinimapVehiclenames",
   "checked": "aktiviert",
   "unchecked": "deaktiviert",
   "defaultValue": "Standard",
@@ -52,7 +52,7 @@
   "option.never": "Nie",
   "option.username": "Username",
   "option.vehicle": "Fahrzeugbezeichnung",
-  "mark-enemy-squads.header": "Gegnerische Züge markieren",
+  "mark-enemy-squads.header": "Gegnerische Züge auf Minimap mit * markieren",
   "mark-enemy-squads.body": [
     "Zeigt ein * hinter der Fahrzeugbezeichnung von Zugmitgliedern im roten Team."
   ],
@@ -71,5 +71,5 @@
   "battle-log.option.always": "Immer",
   "battle-log.option.on-alt": "Nur bei ALT",
   "battle-log.option.never": "Nie",
-  "credits.label": "Von Lena_Kze in Deutschland erstellt. <3"
+  "credits.label": "Von Lena_Kze in Deutschland gemacht. <3"
 }

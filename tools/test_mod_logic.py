@@ -82,6 +82,7 @@ g_configParams = _t.SimpleNamespace(
     squadNames=_FakeParam(_TeamNamesMode.ALWAYS),
     squadNamesNoAlt=_FakeParam(_SquadNameContent.USERNAME),
     squadNamesAlt=_FakeParam(_SquadNameContent.VEHICLE),
+    markEnemySquads=_FakeParam(True),
     battleLogMode=_FakeParam(_BattleLogMode.ALWAYS),
     battleLogDuration=_FakeParam(5.0),
 )
@@ -292,6 +293,7 @@ check("setVehicleInfo Ally -> hideVehicleName", bp3.invoked[-1] == (4, "hideVehi
 sq_veh = ns["_vehInfo"]
 sq_veh.clear()
 sq_veh[5] = {'isSquad': True, 'classTag': 'MT-XX', 'guiPropsName': 'squad',
+             'isEnemy': False, 'isOwnSquad': True, 'isForeignSquad': False,
              'playerName': 'Lena_Kze', 'vehicleName': 'Tank-X'}
 
 plugin5 = FakePlugin()
@@ -313,6 +315,19 @@ ns["_applySquadNames"](plugin5, True)
 inv = [a for (i, n, a) in plugin5.all_invokes if n == "setVehicleInfo"][-1]
 check("Zug mit Alt: Name=Fahrzeugname", inv[2] == "Tank-X")
 check("Zug mit Alt: weiterhin sichtbar", plugin5.invoked[-1] == (5, "showVehicleName"))
+
+# Fremder Zug: nur gegnerische Fahrzeugbezeichnung mit Stern, niemals Username.
+enemySquadInfo = {'isSquad': True, 'isEnemy': True, 'isOwnSquad': False,
+                  'isForeignSquad': True, 'classTag': 'HT-XX',
+                  'guiPropsName': 'enemy-squad', 'playerName': 'EnemyPlayer',
+                  'vehicleName': 'EnemyTank'}
+ns["_vehInfo"][8] = enemySquadInfo
+enemySquadPlugin = FakePlugin()
+enemySquadPlugin._entries = {8: Entry(8, True)}
+ns["_applySquadNames"] (enemySquadPlugin, False)
+enemyNames = [a for (i, n, a) in enemySquadPlugin.all_invokes if n == "setVehicleInfo"]
+check("Gegnerischer Zug: Fahrzeugname mit Stern", enemyNames[-1][2] == "EnemyTank*")
+check("Gegnerischer Zug: kein Username", enemyNames[-1][2] != "EnemyPlayer")
 
 # Squad-names Modus "always" (Standard): ohne Alt Spielername, mit Alt Fahrzeugname
 plugin5.invoked = []

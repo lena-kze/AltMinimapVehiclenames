@@ -1,5 +1,5 @@
 {
-  "modname": "AltMinimapVehiclenamesLena",
+  "modname": "AltMinimapVehiclenames",
   "checked": "checked",
   "unchecked": "unchecked",
   "defaultValue": "default",
@@ -70,5 +70,5 @@
   "battle-log.option.always": "Always",
   "battle-log.option.on-alt": "Only on ALT",
   "battle-log.option.never": "Never",
-  "credits.label": "Von Lena_Kze in Deutschland erstellt. <3"
+  "credits.label": "Von Lena_Kze in Deutschland gemacht. <3"
 }

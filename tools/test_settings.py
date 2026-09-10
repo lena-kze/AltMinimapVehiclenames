@@ -371,13 +371,13 @@ check("Kaputte JSON: loadConfigDict wirft ConfigException", raised)
 # 8) Translations: DE/EN, Cache-Reset, Fallback, Sprachwechsel
 # ----------------------------------------------------------------------
 translations.loadTranslations("de")
-check("Tr.MODNAME DE", same(Tr.MODNAME, "AltMinimapVehiclenamesLena"))
+check("Tr.MODNAME DE", same(Tr.MODNAME, "AltMinimapVehiclenames"))
 check("Tr.OPTION_HIDE_ON_ALT DE",
       same(Tr.OPTION_HIDE_ON_ALT, "Bei ALT verstecken"))
 de_modname = Tr.MODNAME
 translations.loadTranslations("en")
 check("Sprachwechsel: Tr.MODNAME NEU (Cache-Reset)",
-      same(Tr.MODNAME, "AltMinimapVehiclenamesLena"))
+      same(Tr.MODNAME, "AltMinimapVehiclenames"))
 check("Tr.OPTION_HIDE_ON_ALT EN",
       same(Tr.OPTION_HIDE_ON_ALT, "Hide on ALT"))
 check("getTranslation Untranslated-Token", same(getTranslation("fake.token"), "fake.token"))
@@ -417,7 +417,11 @@ check("MSA-Test: Default-Config geladen",
 msa_support.registerSoftDependencySupport()
 modal, handler = FAKE_MSA.templates[msa_support.modLinkage]
 check("modLinkage", same(msa_support.modLinkage, "com.github.lena.altminimapvehiclenames"))
-check("modDisplayName", same(msa_support.modDisplayName, "AltMinimapVehiclenamesLena"))
+check("modDisplayName", same(msa_support.modDisplayName, "AltMinimapVehiclenames"))
+credits = [p for p in modal["column1"] if p.get("type") == "Label"][-1]
+check("Credits ohne Regenbogen", credits["text"] == "Von Lena_Kze in Deutschland gemacht. <3")
+check("Gegnerische-Züge-Beschriftung",
+      same(Tr.MARK_ENEMY_SQUADS_HEADER, "Gegnerische Züge auf Minimap mit * markieren"))
 check("Template enabled default True", modal["enabled"] is True)
 
 def dropdown_names():

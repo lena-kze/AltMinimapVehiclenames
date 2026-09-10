@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 from gui.modsSettingsApi import g_modsSettingsApi
 
 modLinkage = 'com.github.lena.altminimapvehiclenames'
-modDisplayName = 'AltMinimapVehiclenamesLena'
+modDisplayName = 'AltMinimapVehiclenames'
 
 
 def registerSoftDependencySupport():
@@ -70,7 +70,7 @@ def _createTeamSettingsPart():
 
 
 def _createCreditsPart():
-    return [{'type': 'Label', 'text': (_createRainbowText(Tr.CREDITS_LABEL))}]
+    return [{'type': 'Label', 'text': Tr.CREDITS_LABEL}]
 
 
 def _createBattleLogSettingsPart():
