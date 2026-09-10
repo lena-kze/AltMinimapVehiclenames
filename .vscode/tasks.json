@@ -1,0 +1,12 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Pack AltMinimapVehiclenames.wotmod (aus patch_work/battle.swf)",
+      "type": "shell",
+      "command": "${workspaceFolder}/tools/pack.sh",
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": []
+    }
+  ]
+}

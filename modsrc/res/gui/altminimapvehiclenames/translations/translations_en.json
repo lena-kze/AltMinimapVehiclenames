@@ -1,0 +1,74 @@
+{
+  "modname": "AltMinimapVehiclenamesLena",
+  "checked": "checked",
+  "unchecked": "unchecked",
+  "defaultValue": "default",
+  "enemy-settings.label": "Minimap label per team",
+  "enemy-names.header": "Enemy labels",
+  "enemy-names.body": [
+    "Determines when vehicle names of enemy tanks are displayed:\n",
+    "- Only on ALT - only while ALT is pressed,\n",
+    "- Hide on ALT - visible without ALT, hidden with ALT (default),\n",
+    "- Always - vehicle names are always displayed,\n",
+    "- Never - vehicle names are never displayed."
+  ],
+  "ally-settings.label": "",
+  "ally-names.header": "Ally labels",
+  "ally-names.body": [
+    "Determines when vehicle names of allied tanks are displayed:\n",
+    "- Only on ALT - hidden without ALT, visible with ALT (default),\n",
+    "- Hide on ALT - visible without ALT, hidden with ALT,\n",
+    "- Always - vehicle names are always displayed,\n",
+    "- Never - vehicle names are never displayed."
+  ],
+  "squad-settings.label": "",
+  "squad-names.header": "Squad member labels",
+  "squad-names.body": [
+    "Determines when squad members are labeled (same 4 modes as for\n",
+    "enemies and allies):\n",
+    "- Only on ALT - only while ALT is pressed,\n",
+    "- Hide on ALT - visible without ALT, hidden with ALT,\n",
+    "- Always - always visible (default),\n",
+    "- Never - squad members are never labeled.\n\n",
+    "The name shown is chosen in the two dropdowns below:\n",
+    "'Without ALT' and 'With ALT' - player name or vehicle name."
+  ],
+  "squad-names-no-alt.header": "Squad member label variable Without ALT",
+  "squad-names-no-alt.body": [
+    "Name shown for squad members while ALT is not pressed:\n",
+    "- Username - the player name (default),\n",
+    "- Vehicle - the vehicle name."
+  ],
+  "squad-names-alt.header": "Squad member label variable With ALT key",
+  "squad-names-alt.body": [
+    "Name shown for squad members while ALT is pressed:\n",
+    "- Username - the player name,\n",
+    "- Vehicle - the vehicle name (default)."
+  ],
+  "option.show-on-alt": "Only on ALT",
+  "option.hide-on-alt": "Hide on ALT",
+  "option.always": "Always",
+  "option.never": "Never",
+  "option.username": "Username",
+  "option.vehicle": "Vehicle",
+  "mark-enemy-squads.header": "Mark enemy platoons",
+  "mark-enemy-squads.body": [
+    "Adds a * after the vehicle name of platoon members on the red team."
+  ],
+  "battle-log-settings.label": "Battle log above the minimap",
+  "battle-log-mode.header": "Battle log display",
+  "battle-log-mode.body": [
+    "Determines when kills and events are displayed above the minimap:\n",
+    "- Always - the game's default behavior,\n",
+    "- Only on ALT - only while ALT is pressed,\n",
+    "- Never - the battle log is not displayed."
+  ],
+  "battle-log-duration.header": "Battle log entry display time",
+  "battle-log-duration.body": [
+    "Determines how many seconds a new battle log entry remains visible."
+  ],
+  "battle-log.option.always": "Always",
+  "battle-log.option.on-alt": "Only on ALT",
+  "battle-log.option.never": "Never",
+  "credits.label": "Von Lena_Kze in Deutschland erstellt. <3"
+}

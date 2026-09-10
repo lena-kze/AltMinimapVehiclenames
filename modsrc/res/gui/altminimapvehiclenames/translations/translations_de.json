@@ -1,0 +1,75 @@
+{
+  "modname": "AltMinimapVehiclenamesLena",
+  "checked": "aktiviert",
+  "unchecked": "deaktiviert",
+  "defaultValue": "Standard",
+  "enemy-settings.label": "Minimapbezeichnung pro Team",
+  "enemy-names.header": "Feindliche Bezeichnungen",
+  "enemy-names.body": [
+    "Legt fest, wann Fahrzeugnamen feindlicher Panzer angezeigt werden:\n",
+    "- Nur bei ALT - nur bei gedrückter ALT-Taste,\n",
+    "- Bei ALT verstecken - ohne Alt sichtbar, mit Alt ausgeblendet (Standard),\n",
+    "- Immer - Fahrzeugnamen werden immer angezeigt,\n",
+    "- Nie - Fahrzeugnamen werden nie angezeigt."
+  ],
+  "ally-settings.label": "",
+  "ally-names.header": "Verbündete Bezeichnungen",
+  "ally-names.body": [
+    "Legt fest, wann Fahrzeugnamen verbündeter Panzer angezeigt werden:\n",
+    "- Nur bei ALT - ohne Alt ausgeblendet, mit Alt sichtbar (Standard),\n",
+    "- Bei ALT verstecken - ohne Alt sichtbar, mit Alt ausgeblendet,\n",
+    "- Immer - Fahrzeugnamen werden immer angezeigt,\n",
+    "- Nie - Fahrzeugnamen werden nie angezeigt."
+  ],
+  "squad-settings.label": "",
+  "squad-names.header": "Zugmitglied Bezeichnungen",
+  "squad-names.body": [
+    "Legt fest, wann Zugmitglieder beschriftet werden (gleiche 4 Modi wie bei\n",
+    "Feinden und Verbündeten):\n",
+    "- Nur bei ALT - nur bei gedrückter ALT-Taste,\n",
+    "- Bei ALT verstecken - ohne Alt sichtbar, mit Alt ausgeblendet,\n",
+    "- Immer - immer sichtbar (Standard),\n",
+    "- Nie - Zugmitglieder werden nie beschriftet.\n\n",
+    "Welcher Name angezeigt wird, wählst du in den zwei Dropdowns darunter: \n",
+    "'Ohne ALT' und 'Mit ALT' - jeweils Spielername oder Fahrzeugbezeichnung."
+  ],
+  "squad-names-no-alt.header": "Zugmitgliedsbezeichnungsvariable Ohne ALT",
+  "squad-names-no-alt.body": [
+    "Welcher Name für Zugmitglieder angezeigt wird, solange ALT nicht \n",
+    "gedrückt ist:\n",
+    "- Username - der Spielername (Standard),\n",
+    "- Fahrzeugbezeichnung - der Fahrzeugname."
+  ],
+  "squad-names-alt.header": "Zugmitgliedsbezeichnungsvariable Mit ALT Taste",
+  "squad-names-alt.body": [
+    "Welcher Name für Zugmitglieder angezeigt wird, während ALT gedrückt ist:\n",
+    "- Username - der Spielername,\n",
+    "- Fahrzeugbezeichnung - der Fahrzeugname (Standard)."
+  ],
+  "option.show-on-alt": "Nur bei ALT",
+  "option.hide-on-alt": "Bei ALT verstecken",
+  "option.always": "Immer",
+  "option.never": "Nie",
+  "option.username": "Username",
+  "option.vehicle": "Fahrzeugbezeichnung",
+  "mark-enemy-squads.header": "Gegnerische Züge markieren",
+  "mark-enemy-squads.body": [
+    "Zeigt ein * hinter der Fahrzeugbezeichnung von Zugmitgliedern im roten Team."
+  ],
+  "battle-log-settings.label": "Gefechtslog über der Minimap",
+  "battle-log-mode.header": "Anzeige des Gefechtslogs",
+  "battle-log-mode.body": [
+    "Legt fest, wann Kills und Ereignisse rechts über der Minimap angezeigt werden:\n",
+    "- Immer - Standardverhalten des Spiels,\n",
+    "- Nur bei ALT - nur bei gedrückter ALT-Taste,\n",
+    "- Nie - der Gefechtslog wird nicht angezeigt."
+  ],
+  "battle-log-duration.header": "Anzeigedauer des Gefechtslog-Eintrags",
+  "battle-log-duration.body": [
+    "Legt fest, wie viele Sekunden ein neuer Gefechtslog-Eintrag sichtbar bleibt."
+  ],
+  "battle-log.option.always": "Immer",
+  "battle-log.option.on-alt": "Nur bei ALT",
+  "battle-log.option.never": "Nie",
+  "credits.label": "Von Lena_Kze in Deutschland erstellt. <3"
+}

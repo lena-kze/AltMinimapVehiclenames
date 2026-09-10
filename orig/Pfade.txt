@@ -1,0 +1,7 @@
+gui-part1.pkg
+
+gui\flash\assets.swf
+
+gui-part3.pkg
+
+gui\flash\battle.swf
