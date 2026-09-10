@@ -65,6 +65,12 @@ class _BattleLogMode(object):
     NEVER = 'never'
 
 
+class _EnemySquadStarPosition(object):
+    BEFORE = 'before'
+    BOTH = 'both'
+    AFTER = 'after'
+
+
 class _FakeParam(object):
     def __init__(self, value, disabledValue=None):
         self.value = value
@@ -83,6 +89,7 @@ g_configParams = _t.SimpleNamespace(
     squadNamesNoAlt=_FakeParam(_SquadNameContent.USERNAME),
     squadNamesAlt=_FakeParam(_SquadNameContent.VEHICLE),
     markEnemySquads=_FakeParam(True),
+    enemySquadStarPosition=_FakeParam(_EnemySquadStarPosition.AFTER),
     battleLogMode=_FakeParam(_BattleLogMode.ALWAYS),
     battleLogDuration=_FakeParam(5.0),
 )
@@ -92,6 +99,7 @@ _stubParams.g_configParams = g_configParams
 _stubParams.TeamNamesMode = _TeamNamesMode
 _stubParams.SquadNameContent = _SquadNameContent
 _stubParams.BattleLogMode = _BattleLogMode
+_stubParams.EnemySquadStarPosition = _EnemySquadStarPosition
 
 # Paquet-Stubs, damit der Core die echte Settings-Datei NICHT laedt.
 _pkg = _t.ModuleType("altminimapvehiclenames")
@@ -328,6 +336,16 @@ ns["_applySquadNames"] (enemySquadPlugin, False)
 enemyNames = [a for (i, n, a) in enemySquadPlugin.all_invokes if n == "setVehicleInfo"]
 check("Gegnerischer Zug: Fahrzeugname mit Stern", enemyNames[-1][2] == "EnemyTank*")
 check("Gegnerischer Zug: kein Username", enemyNames[-1][2] != "EnemyPlayer")
+for position, expected in ((_EnemySquadStarPosition.BEFORE, '*EnemyTank'),
+                           (_EnemySquadStarPosition.BOTH, '*EnemyTank*'),
+                           (_EnemySquadStarPosition.AFTER, 'EnemyTank*')):
+    g_configParams.enemySquadStarPosition.value = position
+    enemySquadPlugin.invoked = []
+    enemySquadPlugin.all_invokes = []
+    ns["_applySquadNames"](enemySquadPlugin, True)
+    inv = [a for (i, n, a) in enemySquadPlugin.all_invokes if n == "setVehicleInfo"][-1]
+    check("Gegnerischer Zug Sternposition %s" % position, inv[2] == expected)
+g_configParams.enemySquadStarPosition.value = _EnemySquadStarPosition.AFTER
 
 # Squad-names Modus "always" (Standard): ohne Alt Spielername, mit Alt Fahrzeugname
 plugin5.invoked = []

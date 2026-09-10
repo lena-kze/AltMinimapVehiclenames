@@ -172,8 +172,8 @@ def same(source, target):
 registered = sorted(t for t, _ in g_configParams.items())
 check("Params registriert",
        registered == ["ally-names", "battle-log-duration", "battle-log-mode",
-                     "enabled", "enemy-names",
-                     "mark-enemy-squads",
+                      "enabled", "enemy-names",
+                      "enemy-squad-star-position", "mark-enemy-squads",
                       "squad-names", "squad-names-alt", "squad-names-no-alt"])
 check("enemy-names default", same(g_configParams.enemyNames.defaultValue, "hide-on-alt"))
 check("ally-names default", same(g_configParams.allyNames.defaultValue, "show-on-alt"))
@@ -182,6 +182,8 @@ check("squad-names-no-alt default", same(g_configParams.squadNamesNoAlt.defaultV
 check("squad-names-alt default", same(g_configParams.squadNamesAlt.defaultValue, "vehicle"))
 check("enabled default True", g_configParams.enabled.defaultValue is True)
 check("mark-enemy-squads default True", g_configParams.markEnemySquads.defaultValue is True)
+check("enemy-squad-star-position default after",
+      g_configParams.enemySquadStarPosition.defaultValue == "after")
 check("battle-log-mode default always", g_configParams.battleLogMode.defaultValue == "always")
 check("battle-log-duration default 5 seconds", g_configParams.battleLogDuration.defaultValue == 5.0)
 check("TeamNamesMode-Konstanten",
@@ -239,6 +241,9 @@ check("enemy-names msa hide-on-alt = 1", enemy.toMsaValue("hide-on-alt") == 1)
 check("enemy-names msa always = 2", enemy.toMsaValue("always") == 2)
 check("enemy-names msa never = 3", enemy.toMsaValue("never") == 3)
 check("enemy-names fromMsa(2) = always", same(enemy.fromMsaValue(2), "always"))
+check("enemy-squad-star-position options",
+      [o.value for o in g_configParams.enemySquadStarPosition.options]
+      == ["before", "both", "after"])
 check("enabled jsonValue True -> 'true'", same(g_configParams.enabled.jsonValue, "true"))
 g_configParams.enabled.jsonValue = "false"
 check("enabled jsonValue 'false' setzt value False",
@@ -250,7 +255,7 @@ g_configParams.enabled.jsonValue = True
 # ----------------------------------------------------------------------
 default_tokens = settings_mod.getDefaultConfigTokens()
 check("getDefaultConfigTokens: alle 9 Tokens",
-      sorted(default_tokens) == ["ally-names", "battle-log-duration", "battle-log-mode", "enabled", "enemy-names", "mark-enemy-squads", "squad-names", "squad-names-alt", "squad-names-no-alt"])
+      sorted(default_tokens) == ["ally-names", "battle-log-duration", "battle-log-mode", "enabled", "enemy-names", "enemy-squad-star-position", "mark-enemy-squads", "squad-names", "squad-names-alt", "squad-names-no-alt"])
 missing = re.findall(r'%\(([^)]*)\)s', CONFIG_TEMPLATE)
 check("Template-Platzhalter = Tokenliste", sorted(set(missing)) == sorted(default_tokens))
 rendered = CONFIG_TEMPLATE % default_tokens
@@ -429,10 +434,13 @@ def dropdown_names():
 
 check("Dropdowns vorhanden", sorted(dropdown_names()) ==
       sorted(["enemy-names", "ally-names", "squad-names",
-              "squad-names-no-alt", "squad-names-alt", "battle-log-mode"]))
+              "squad-names-no-alt", "squad-names-alt", "battle-log-mode",
+              "enemy-squad-star-position"]))
 check("Platoon-Markierungen vorhanden",
-      sorted(p.get("varName") for p in modal["column1"] if p.get("type") == "CheckBox")
-      == ["mark-enemy-squads"])
+       sorted(p.get("varName") for p in modal["column1"] if p.get("type") == "CheckBox")
+       == ["mark-enemy-squads"])
+check("Sternposition-Dropdown vorhanden",
+      [p.get("varName") for p in modal["column1"] if p.get("type") == "Dropdown"].count("enemy-squad-star-position") == 1)
 check("enemy-names 4 Optionen (DE)",
       [o["label"] for o in dropdown("enemy-names")["options"]]
       == ["Nur bei ALT", "Bei ALT verstecken", "Immer", "Nie"])
@@ -485,8 +493,8 @@ linkage_pushed, pushed = FAKE_MSA.updated[-1]
 check("onConfigFileReload pusht alle Tokens",
       linkage_pushed == msa_support.modLinkage
       and sorted(pushed) == sorted(["enemy-names", "ally-names", "squad-names",
-                                     "squad-names-no-alt", "squad-names-alt",
-                                     "mark-enemy-squads",
+                                      "squad-names-no-alt", "squad-names-alt",
+                                      "mark-enemy-squads", "enemy-squad-star-position",
                                       "enabled", "battle-log-mode",
                                       "battle-log-duration"]))
 check("onConfigFileReload enemy-names msa 1 (hide-on-alt)",

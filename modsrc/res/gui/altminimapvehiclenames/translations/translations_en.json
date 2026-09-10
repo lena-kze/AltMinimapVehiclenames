@@ -51,9 +51,16 @@
   "option.never": "Never",
   "option.username": "Username",
   "option.vehicle": "Vehicle",
+  "star-position.option.before": "*Name",
+  "star-position.option.both": "*Name*",
+  "star-position.option.after": "Name*",
   "mark-enemy-squads.header": "Mark enemy platoons",
   "mark-enemy-squads.body": [
     "Adds a * after the vehicle name of platoon members on the red team."
+  ],
+  "enemy-squad-star-position.header": "Enemy platoon star position",
+  "enemy-squad-star-position.body": [
+    "Controls where the star is displayed on enemy platoon vehicle names."
   ],
   "battle-log-settings.label": "Battle log above the minimap",
   "battle-log-mode.header": "Battle log display",

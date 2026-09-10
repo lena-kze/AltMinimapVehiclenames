@@ -21,6 +21,12 @@ class BattleLogMode(object):
     NEVER = 'never'
 
 
+class EnemySquadStarPosition(object):
+    BEFORE = 'before'
+    BOTH = 'both'
+    AFTER = 'after'
+
+
 _TEAM_OPTIONS = [
     Option(TeamNamesMode.SHOW_ON_ALT, 0, 'option.show-on-alt'),
     Option(TeamNamesMode.HIDE_ON_ALT, 1, 'option.hide-on-alt'),
@@ -37,6 +43,12 @@ _BATTLE_LOG_OPTIONS = [
     Option(BattleLogMode.ALWAYS, 0, 'battle-log.option.always'),
     Option(BattleLogMode.ON_ALT, 1, 'battle-log.option.on-alt'),
     Option(BattleLogMode.NEVER, 2, 'battle-log.option.never'),
+]
+
+_ENEMY_SQUAD_STAR_OPTIONS = [
+    Option(EnemySquadStarPosition.BEFORE, 0, 'star-position.option.before'),
+    Option(EnemySquadStarPosition.BOTH, 1, 'star-position.option.both'),
+    Option(EnemySquadStarPosition.AFTER, 2, 'star-position.option.after'),
 ]
 
 
@@ -57,6 +69,10 @@ class ConfigParams(object):
             'squad-names-alt'], list(_SQUAD_CONTENT_OPTIONS), defaultValue=SquadNameContent.VEHICLE, disabledValue=SquadNameContent.VEHICLE)
         self.markEnemySquads = BooleanParam([
             'mark-enemy-squads'], defaultValue=True)
+        self.enemySquadStarPosition = OptionsParam([
+            'enemy-squad-star-position'], list(_ENEMY_SQUAD_STAR_OPTIONS),
+            defaultValue=EnemySquadStarPosition.AFTER,
+            disabledValue=EnemySquadStarPosition.AFTER)
         self.battleLogMode = OptionsParam([
             'battle-log-mode'], list(_BATTLE_LOG_OPTIONS),
             defaultValue=BattleLogMode.ALWAYS,

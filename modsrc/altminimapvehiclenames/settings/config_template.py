@@ -57,6 +57,10 @@ CONFIG_TEMPLATE = '''{
     // Mark platoon members from the enemy team with a '*' after the vehicle name.
     "mark-enemy-squads": %(mark-enemy-squads)s,
 
+    // Valid values: ["before", "both", "after"] (default: "after")
+    // Controls the position of the star on enemy platoon vehicle names.
+    "enemy-squad-star-position": %(enemy-squad-star-position)s,
+
     // Valid values: ["always", "on-alt", "never"] (default: "always")
     // Controls visibility of the battle log above the minimap.
     "battle-log-mode": %(battle-log-mode)s,

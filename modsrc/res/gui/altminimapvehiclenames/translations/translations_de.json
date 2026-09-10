@@ -52,9 +52,16 @@
   "option.never": "Nie",
   "option.username": "Username",
   "option.vehicle": "Fahrzeugbezeichnung",
+  "star-position.option.before": "*Bezeichnung",
+  "star-position.option.both": "*Bezeichnung*",
+  "star-position.option.after": "Bezeichnung*",
   "mark-enemy-squads.header": "Gegnerische Züge auf Minimap mit * markieren",
   "mark-enemy-squads.body": [
     "Zeigt ein * hinter der Fahrzeugbezeichnung von Zugmitgliedern im roten Team."
+  ],
+  "enemy-squad-star-position.header": "Position der Sternchen bei Gegner-Zügen",
+  "enemy-squad-star-position.body": [
+    "Legt fest, wo das Sternchen bei gegnerischen Zugmitgliedern angezeigt wird."
   ],
   "battle-log-settings.label": "Gefechtslog über der Minimap",
   "battle-log-mode.header": "Anzeige des Gefechtslogs",

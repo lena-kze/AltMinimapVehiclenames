@@ -9,6 +9,7 @@ from altminimapvehiclenames.settings.config_param import g_configParams
 from altminimapvehiclenames.settings.config_param import TeamNamesMode
 from altminimapvehiclenames.settings.config_param import SquadNameContent
 from altminimapvehiclenames.settings.config_param import BattleLogMode
+from altminimapvehiclenames.settings.config_param import EnemySquadStarPosition
 
 _logger = logging.getLogger(__name__)
 _logger.setLevel(logging.INFO)
@@ -82,6 +83,11 @@ def _squadNameContent(isDown):
 def _squadDisplayedName(info, isDown):
     if info.get('isForeignSquad'):
         if info.get('isEnemy') and g_configParams.markEnemySquads():
+            position = g_configParams.enemySquadStarPosition()
+            if position == EnemySquadStarPosition.BEFORE:
+                return '*' + info['vehicleName']
+            if position == EnemySquadStarPosition.BOTH:
+                return '*' + info['vehicleName'] + '*'
             return info['vehicleName'] + '*'
         return info['vehicleName']
     if not info.get('isOwnSquad'):
@@ -173,6 +179,7 @@ def _applySquadNames(plugin, isDown):
                     plugin._invoke(entry.getID(), 'setVehicleInfo', vehicleID,
                                  info['classTag'], _squadDisplayedName(info, isDown),
                                  info['guiPropsName'], '')
+                    _applyEntryNameVisibility(plugin, entry, isDown, info)
                 continue
             if not info.get('isOwnSquad'):
                 continue
@@ -321,6 +328,7 @@ def _patched_setVehicleInfo(self, vehicleID, entry, vInfo, guiProps, isSpotted=F
             self._invoke(entry.getID(), 'setVehicleInfo', vehicleID,
                          info['classTag'], _squadDisplayedName(info, _altDown),
                          info['guiPropsName'], '')
+            _applyEntryNameVisibility(self, entry, _altDown, info)
         elif info['isOwnSquad'] and not _altDown and _squadMode() in (
                 TeamNamesMode.ALWAYS, TeamNamesMode.HIDE_ON_ALT):
             # ohne Alt: sofort den gewaehlten Namen (squad-names-no-alt) zeigen
