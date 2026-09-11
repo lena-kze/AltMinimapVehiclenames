@@ -59,12 +59,6 @@ class _SquadNameContent(object):
     VEHICLE = 'vehicle'
 
 
-class _BattleLogMode(object):
-    ALWAYS = 'always'
-    ON_ALT = 'on-alt'
-    NEVER = 'never'
-
-
 class _EnemySquadStarPosition(object):
     BEFORE = 'before'
     BOTH = 'both'
@@ -90,14 +84,12 @@ g_configParams = _t.SimpleNamespace(
     squadNamesAlt=_FakeParam(_SquadNameContent.VEHICLE),
     markEnemySquads=_FakeParam(True),
     enemySquadStarPosition=_FakeParam(_EnemySquadStarPosition.AFTER),
-    battleLogMode=_FakeParam(_BattleLogMode.ALWAYS),
 )
 
 _stubParams = _t.ModuleType("altminimapvehiclenames.settings.config_param")
 _stubParams.g_configParams = g_configParams
 _stubParams.TeamNamesMode = _TeamNamesMode
 _stubParams.SquadNameContent = _SquadNameContent
-_stubParams.BattleLogMode = _BattleLogMode
 _stubParams.EnemySquadStarPosition = _EnemySquadStarPosition
 
 # Paquet-Stubs, damit der Core die echte Settings-Datei NICHT laedt.
@@ -562,38 +554,6 @@ check("Reset: _altDown geleert", ns["_altDown"] is False)
 check("Reset: _vehInfo geleert", 9 not in ns["_vehInfo"])
 ns["_ensureInitialReset"](bpR)
 check("Reset: laeuft nur einmal", bpR.ctrl_calls == [False])
-
-# ---------------- Gefechtslog: Sichtbarkeit ueber das _setSettings-Gate ----------------
-setCalls = []
-ns["_orig_log_setSettings"] = lambda panel, visible, colorBlind: setCalls.append((visible, colorBlind))
-ns["_orig_log_handleShowExtendedInfo"] = lambda panel, event: None
-ns["_logBaseVisible"] = True
-ns["_logColorBlind"] = False
-ns["_logAltDown"] = False
-logPanel = _t.SimpleNamespace()
-
-g_configParams.battleLogMode.value = _BattleLogMode.ALWAYS
-ns["_patched_log_setSettings"](logPanel, True, True)
-check("Gefechtslog: Immer -> Spiel-Sichtbarkeit durchgereicht",
-      setCalls[-1] == (True, True))
-ns["_patched_log_setSettings"](logPanel, False, True)
-check("Gefechtslog: Immer -> ausgeblendet, wenn Spiel es will",
-      setCalls[-1] == (False, True))
-
-g_configParams.battleLogMode.value = _BattleLogMode.ON_ALT
-ns["_logAltDown"] = False
-ns["_patched_log_setSettings"](logPanel, True, False)
-check("Gefechtslog: on-alt ohne ALT -> ausgeblendet", setCalls[-1] == (False, False))
-event = _t.SimpleNamespace(ctx={"isDown": True})
-ns["_patched_log_handleShowExtendedInfo"](logPanel, event)
-check("Gefechtslog: ALT-Event blendet ein", setCalls[-1] == (True, False))
-ns["_logAltDown"] = True
-ns["_applyBattleLogVisibility"](logPanel)
-check("Gefechtslog: on-alt mit ALT -> sichtbar", setCalls[-1] == (True, False))
-
-g_configParams.battleLogMode.value = _BattleLogMode.NEVER
-ns["_applyBattleLogVisibility"](logPanel)
-check("Gefechtslog: nie -> immer ausgeblendet", setCalls[-1] == (False, False))
 
 
 print("")

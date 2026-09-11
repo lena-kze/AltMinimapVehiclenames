@@ -15,12 +15,6 @@ class SquadNameContent(object):
     VEHICLE = 'vehicle'
 
 
-class BattleLogMode(object):
-    ALWAYS = 'always'
-    ON_ALT = 'on-alt'
-    NEVER = 'never'
-
-
 class EnemySquadStarPosition(object):
     BEFORE = 'before'
     BOTH = 'both'
@@ -37,12 +31,6 @@ _TEAM_OPTIONS = [
 _SQUAD_CONTENT_OPTIONS = [
     Option(SquadNameContent.USERNAME, 0, 'option.username'),
     Option(SquadNameContent.VEHICLE, 1, 'option.vehicle'),
-]
-
-_BATTLE_LOG_OPTIONS = [
-    Option(BattleLogMode.ALWAYS, 0, 'battle-log.option.always'),
-    Option(BattleLogMode.ON_ALT, 1, 'battle-log.option.on-alt'),
-    Option(BattleLogMode.NEVER, 2, 'battle-log.option.never'),
 ]
 
 _ENEMY_SQUAD_STAR_OPTIONS = [
@@ -73,10 +61,6 @@ class ConfigParams(object):
             'enemy-squad-star-position'], list(_ENEMY_SQUAD_STAR_OPTIONS),
             defaultValue=EnemySquadStarPosition.AFTER,
             disabledValue=EnemySquadStarPosition.AFTER)
-        self.battleLogMode = OptionsParam([
-            'battle-log-mode'], list(_BATTLE_LOG_OPTIONS),
-            defaultValue=BattleLogMode.ALWAYS,
-            disabledValue=BattleLogMode.ALWAYS)
 
     @staticmethod
     def items():

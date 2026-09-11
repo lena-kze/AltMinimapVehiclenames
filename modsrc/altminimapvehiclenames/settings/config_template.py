@@ -61,10 +61,6 @@ CONFIG_TEMPLATE = '''{
     // Controls the position of the star on enemy platoon vehicle names.
     "enemy-squad-star-position": %(enemy-squad-star-position)s,
 
-    // Valid values: ["always", "on-alt", "never"] (default: "always")
-    // Controls visibility of the battle log above the minimap.
-    "battle-log-mode": %(battle-log-mode)s,
-
     // DO NOT touch "__version__" field
     "__version__": 5
 }

@@ -62,16 +62,5 @@
   "enemy-squad-star-position.body": [
     "Controls where the star is displayed on enemy platoon vehicle names."
   ],
-  "battle-log-settings.label": "Battle log above the minimap",
-  "battle-log-mode.header": "Battle log display",
-  "battle-log-mode.body": [
-    "Determines when kills and events are displayed above the minimap:\n",
-    "- Always - the game's default behavior,\n",
-    "- Only on ALT - only while ALT is pressed,\n",
-    "- Never - the battle log is not displayed."
-  ],
-  "battle-log.option.always": "Always",
-  "battle-log.option.on-alt": "Only on ALT",
-  "battle-log.option.never": "Never",
   "credits.label": "Von Lena_Kze in Deutschland gemacht. <3"
 }

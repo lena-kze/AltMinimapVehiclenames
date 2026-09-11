@@ -7,7 +7,6 @@ from PlayerEvents import g_playerEvents
 from altminimapvehiclenames.settings.config_param import g_configParams
 from altminimapvehiclenames.settings.config_param import TeamNamesMode
 from altminimapvehiclenames.settings.config_param import SquadNameContent
-from altminimapvehiclenames.settings.config_param import BattleLogMode
 from altminimapvehiclenames.settings.config_param import EnemySquadStarPosition
 
 _logger = logging.getLogger(__name__)
@@ -19,13 +18,6 @@ _ArenaVehiclesPlugin = None
 _altDown = False
 _resetDone = False
 _vehInfo = {}
-_logAltDown = False
-_logBaseVisible = True
-_logColorBlind = False
-_DamageLogPanel = None
-_orig_log_setSettings = None
-_orig_log_handleShowExtendedInfo = None
-_LOG_PATCHED = False
 
 
 def _log(msg):
@@ -54,19 +46,6 @@ def _allyMode():
 
 def _squadMode():
     return g_configParams.squadNames()
-
-
-def _battleLogMode():
-    return g_configParams.battleLogMode()
-
-
-def _battleLogVisible():
-    mode = _battleLogMode()
-    if mode == BattleLogMode.ON_ALT:
-        return _logAltDown
-    if mode == BattleLogMode.NEVER:
-        return False
-    return True
 
 
 def _squadNameContent(isDown):
@@ -209,26 +188,6 @@ def _entryVehicleID(plugin, entry):
     return None
 
 
-def _applyBattleLogVisibility(panel):
-    if _orig_log_setSettings is None:
-        return
-    _orig_log_setSettings(panel, _logBaseVisible and _battleLogVisible(), _logColorBlind)
-
-
-def _patched_log_setSettings(self, isVisible, isColorBlind):
-    global _logBaseVisible, _logColorBlind
-    _logBaseVisible = bool(isVisible)
-    _logColorBlind = bool(isColorBlind)
-    _applyBattleLogVisibility(self)
-
-
-def _patched_log_handleShowExtendedInfo(self, event):
-    global _logAltDown
-    _orig_log_handleShowExtendedInfo(self, event)
-    _logAltDown = bool(event.ctx['isDown'])
-    _applyBattleLogVisibility(self)
-
-
 def _applyNameRules(plugin):
     # Globaler Namen-Toggle aus, damit unsere per-Entry-Regel das letzte
     # Wort hat (Vorgehen wie bisher).
@@ -348,52 +307,10 @@ def _getPlayerName(vInfo):
     return None
 
 
-def _applyBattleLogPatch():
-    global _DamageLogPanel, _orig_log_setSettings
-    global _orig_log_handleShowExtendedInfo, _LOG_PATCHED
-    global _logAltDown, _logBaseVisible, _logColorBlind
-    if _LOG_PATCHED:
-        return
-    try:
-        from gui.Scaleform.daapi.view.battle.shared.damage_log_panel import DamageLogPanel
-        _DamageLogPanel = DamageLogPanel
-        _orig_log_setSettings = DamageLogPanel._setSettings
-        _orig_log_handleShowExtendedInfo = DamageLogPanel._handleShowExtendedInfo
-        DamageLogPanel._setSettings = _patched_log_setSettings
-        DamageLogPanel._handleShowExtendedInfo = _patched_log_handleShowExtendedInfo
-        _logAltDown = False
-        _logBaseVisible = True
-        _logColorBlind = False
-        _LOG_PATCHED = True
-        _log('Gefechtslog-Patch aktiv.')
-    except Exception:
-        _logger.exception('%s Konnte Gefechtslog-Patch nicht setzen', _TAG)
-
-
-def _removeBattleLogPatch():
-    global _orig_log_setSettings
-    global _orig_log_handleShowExtendedInfo, _LOG_PATCHED
-    global _logAltDown, _logBaseVisible, _DamageLogPanel
-    if not _LOG_PATCHED:
-        return
-    if _orig_log_setSettings is not None:
-        _DamageLogPanel._setSettings = _orig_log_setSettings
-    if _orig_log_handleShowExtendedInfo is not None:
-        _DamageLogPanel._handleShowExtendedInfo = _orig_log_handleShowExtendedInfo
-    _orig_log_setSettings = None
-    _orig_log_handleShowExtendedInfo = None
-    _DamageLogPanel = None
-    _logAltDown = False
-    _logBaseVisible = True
-    _LOG_PATCHED = False
-
-
 def _applyPatch():
     global _orig_handleShowExtendedInfo, _orig_setVehicleInfo, _orig_setActive
     global _orig_setSettings, _orig_updateSettings, _PATCHED
     global _altDown, _vehInfo, _resetDone
-    global _orig_log_setSettings, _orig_log_handleShowExtendedInfo
-    global _logAltDown, _logBaseVisible
     if _PATCHED:
         return
     if not _modEnabled():
@@ -413,7 +330,6 @@ def _applyPatch():
     cls._ArenaVehiclesPlugin__setActive = _patched_setActive
     cls.setSettings = _patched_setSettings
     cls.updateSettings = _patched_updateSettings
-    _applyBattleLogPatch()
     _PATCHED = True
     _log('Patch aktiv.')
 
@@ -444,7 +360,6 @@ def _removePatch():
     _altDown = False
     _vehInfo.clear()
     _resetDone = False
-    _removeBattleLogPatch()
     _log('Patch entfernt.')
 
 

@@ -171,7 +171,7 @@ def same(source, target):
 # ----------------------------------------------------------------------
 registered = sorted(t for t, _ in g_configParams.items())
 check("Params registriert",
-       registered == ["ally-names", "battle-log-mode",
+       registered == ["ally-names",
                       "enabled", "enemy-names",
                       "enemy-squad-star-position", "mark-enemy-squads",
                       "squad-names", "squad-names-alt", "squad-names-no-alt"])
@@ -184,7 +184,6 @@ check("enabled default True", g_configParams.enabled.defaultValue is True)
 check("mark-enemy-squads default True", g_configParams.markEnemySquads.defaultValue is True)
 check("enemy-squad-star-position default after",
       g_configParams.enemySquadStarPosition.defaultValue == "after")
-check("battle-log-mode default always", g_configParams.battleLogMode.defaultValue == "always")
 check("TeamNamesMode-Konstanten",
       {TeamNamesMode.SHOW_ON_ALT, TeamNamesMode.HIDE_ON_ALT,
        TeamNamesMode.ALWAYS, TeamNamesMode.NEVER}
@@ -254,7 +253,7 @@ g_configParams.enabled.jsonValue = True
 # ----------------------------------------------------------------------
 default_tokens = settings_mod.getDefaultConfigTokens()
 check("getDefaultConfigTokens: alle 8 Tokens",
-      sorted(default_tokens) == ["ally-names", "battle-log-mode", "enabled", "enemy-names", "enemy-squad-star-position", "mark-enemy-squads", "squad-names", "squad-names-alt", "squad-names-no-alt"])
+      sorted(default_tokens) == ["ally-names", "enabled", "enemy-names", "enemy-squad-star-position", "mark-enemy-squads", "squad-names", "squad-names-alt", "squad-names-no-alt"])
 missing = re.findall(r'%\(([^)]*)\)s', CONFIG_TEMPLATE)
 check("Template-Platzhalter = Tokenliste", sorted(set(missing)) == sorted(default_tokens))
 rendered = CONFIG_TEMPLATE % default_tokens
@@ -301,8 +300,6 @@ check("Migration V1->V3: squad-names-no-alt/alt Standard",
        and d_legacy.get("squad-names-alt") == "vehicle")
 check("Migration V3->V4: Platoon-Markierungen aktiv",
       d_legacy.get("mark-enemy-squads") is True)
-check("Migration V4->V5: Gefechtslog-Default",
-      d_legacy.get("battle-log-mode") == "always")
 check("Migration V1->V3: uebrige Werte unveraendert",
       d_legacy.get("enemy-names") == "always"
        and d_legacy.get("ally-names") == "show-on-alt")
@@ -432,7 +429,7 @@ def dropdown_names():
 
 check("Dropdowns vorhanden", sorted(dropdown_names()) ==
       sorted(["enemy-names", "ally-names", "squad-names",
-              "squad-names-no-alt", "squad-names-alt", "battle-log-mode",
+              "squad-names-no-alt", "squad-names-alt",
               "enemy-squad-star-position"]))
 check("Platoon-Markierungen vorhanden",
        sorted(p.get("varName") for p in modal["column1"] if p.get("type") == "CheckBox")
@@ -442,9 +439,6 @@ check("Sternposition-Dropdown vorhanden",
 check("enemy-names 4 Optionen (DE)",
       [o["label"] for o in dropdown("enemy-names")["options"]]
       == ["Nur bei ALT", "Bei ALT verstecken", "Immer", "Nie"])
-check("battle-log-mode 3 Optionen (DE)",
-      [o["label"] for o in dropdown("battle-log-mode")["options"]]
-      == ["Immer", "Nur bei ALT", "Nie"])
 check("squad-names-no-alt 2 Optionen (DE)",
       [o["label"] for o in dropdown("squad-names-no-alt")["options"]]
       == ["Username", "Fahrzeugbezeichnung"])
@@ -492,7 +486,7 @@ check("onConfigFileReload pusht alle Tokens",
       and sorted(pushed) == sorted(["enemy-names", "ally-names", "squad-names",
                                       "squad-names-no-alt", "squad-names-alt",
                                       "mark-enemy-squads", "enemy-squad-star-position",
-                                      "enabled", "battle-log-mode"]))
+                                      "enabled"]))
 check("onConfigFileReload enemy-names msa 1 (hide-on-alt)",
       pushed["enemy-names"] == 1)
 

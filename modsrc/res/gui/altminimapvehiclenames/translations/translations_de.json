@@ -63,16 +63,5 @@
   "enemy-squad-star-position.body": [
     "Legt fest, wo das Sternchen bei gegnerischen Zugmitgliedern angezeigt wird."
   ],
-  "battle-log-settings.label": "Gefechtslog über der Minimap",
-  "battle-log-mode.header": "Anzeige des Gefechtslogs",
-  "battle-log-mode.body": [
-    "Legt fest, wann Kills und Ereignisse rechts über der Minimap angezeigt werden:\n",
-    "- Immer - Standardverhalten des Spiels,\n",
-    "- Nur bei ALT - nur bei gedrückter ALT-Taste,\n",
-    "- Nie - der Gefechtslog wird nicht angezeigt."
-  ],
-  "battle-log.option.always": "Immer",
-  "battle-log.option.on-alt": "Nur bei ALT",
-  "battle-log.option.never": "Nie",
   "credits.label": "Von Lena_Kze in Deutschland gemacht. <3"
 }

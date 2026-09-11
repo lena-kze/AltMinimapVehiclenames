@@ -16,7 +16,7 @@ modDisplayName = 'AltMinimapVehiclenames'
 def registerSoftDependencySupport():
     template = {'modDisplayName': (modDisplayName), 
        'enabled': (g_configParams.enabled.defaultMsaValue), 
-       'column1': (_createTeamSettingsPart() + _createBattleLogSettingsPart() + _createCreditsPart())}
+       'column1': (_createTeamSettingsPart() + _createCreditsPart())}
     g_modsSettingsApi.setModTemplate(modLinkage, template, onModSettingsChanged)
 
 
@@ -74,13 +74,6 @@ def _createTeamSettingsPart():
 
 def _createCreditsPart():
     return [{'type': 'Label', 'text': Tr.CREDITS_LABEL}]
-
-
-def _createBattleLogSettingsPart():
-    return _emptyLine(2) + [
-        {'type': 'Label', 'text': Tr.BATTLE_LOG_SETTINGS_LABEL},
-        g_configParams.battleLogMode.renderParam(
-            header=Tr.BATTLE_LOG_MODE_HEADER, body=Tr.BATTLE_LOG_MODE_BODY)]
 
 
 def _createRainbowText(text):

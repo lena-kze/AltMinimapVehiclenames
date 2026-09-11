@@ -35,15 +35,10 @@ def _migrateV3ToV4(configDict):
     configDict.setdefault('mark-enemy-squads', True)
 
 
-def _migrateV4ToV5(configDict):
-    configDict.setdefault('battle-log-mode', 'always')
-
-
 _MIGRATIONS = {
     ConfigVersion.V2: _migrateV1ToV2,
     ConfigVersion.V3: _migrateV2ToV3,
     ConfigVersion.V4: _migrateV3ToV4,
-    ConfigVersion.V5: _migrateV4ToV5,
 }
 
 
