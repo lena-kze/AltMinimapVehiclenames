@@ -134,8 +134,6 @@ class Tr(object):
     BATTLE_LOG_SETTINGS_LABEL = TranslationElement('battle-log-settings.label')
     BATTLE_LOG_MODE_HEADER = TranslationElement('battle-log-mode.header')
     BATTLE_LOG_MODE_BODY = TranslationElement('battle-log-mode.body')
-    BATTLE_LOG_DURATION_HEADER = TranslationElement('battle-log-duration.header')
-    BATTLE_LOG_DURATION_BODY = TranslationElement('battle-log-duration.body')
     BATTLE_LOG_OPTION_ALWAYS = TranslationElement('battle-log.option.always')
     BATTLE_LOG_OPTION_ON_ALT = TranslationElement('battle-log.option.on-alt')
     BATTLE_LOG_OPTION_NEVER = TranslationElement('battle-log.option.never')

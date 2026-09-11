@@ -1,8 +1,6 @@
 # AltMinimapVehiclenames - battle logic (ArenaVehiclesPlugin patching)
 
 import logging
-import time
-import BigWorld
 
 from PlayerEvents import g_playerEvents
 
@@ -22,14 +20,10 @@ _altDown = False
 _resetDone = False
 _vehInfo = {}
 _logAltDown = False
-_logRecords = None
-_logRecordStyle = False
-_logClearCallback = None
-_logEntries = []
-_logPanel = None
+_logBaseVisible = True
+_logColorBlind = False
 _DamageLogPanel = None
-_orig_log_updateTopLog = None
-_orig_log_addToTopLog = None
+_orig_log_setSettings = None
 _orig_log_handleShowExtendedInfo = None
 _LOG_PATCHED = False
 
@@ -215,90 +209,17 @@ def _entryVehicleID(plugin, entry):
     return None
 
 
-def _battleLogNow():
-    gameTime = getattr(BigWorld, 'time', None)
-    if callable(gameTime):
-        return gameTime()
-    return time.time()
-
-
-def _renderBattleLog(panel):
-    if _orig_log_updateTopLog is None:
-        return
-    activeRecords = [record for expiry, record in _logEntries
-                     if expiry > _battleLogNow()]
-    _orig_log_updateTopLog(panel, _battleLogVisible(), _logRecordStyle, activeRecords)
-
-
-def _scheduleBattleLogExpiry(panel):
-    global _logClearCallback
-    if _logClearCallback is not None:
-        try:
-            BigWorld.cancelCallback(_logClearCallback)
-        except Exception:
-            pass
-    if not _logEntries:
-        _logClearCallback = None
-        return
-    delay = max(0.0, min(expiry for expiry, record in _logEntries) - _battleLogNow())
-    _logClearCallback = BigWorld.callback(delay, lambda: _onBattleLogExpiry(panel))
-
-
-def _onBattleLogExpiry(panel):
-    global _logEntries, _logClearCallback
-    now = _battleLogNow()
-    _logEntries = [(expiry, record) for expiry, record in _logEntries if expiry > now]
-    _logClearCallback = None
-    _renderBattleLog(panel)
-    _scheduleBattleLogExpiry(panel)
-
-
-def _addBattleLogRecord(panel, record):
-    now = _battleLogNow()
-    if not any(existing == record for expiry, existing in _logEntries):
-        _logEntries.append((now + float(g_configParams.battleLogDuration()), record))
-    _renderBattleLog(panel)
-    _scheduleBattleLogExpiry(panel)
-
-
 def _applyBattleLogVisibility(panel):
-    if _logRecords is None and not _logEntries:
+    if _orig_log_setSettings is None:
         return
-    _renderBattleLog(panel)
+    _orig_log_setSettings(panel, _logBaseVisible and _battleLogVisible(), _logColorBlind)
 
 
-def _patched_log_updateTopLog(self, isVisible, isShortMode, records):
-    global _logRecords, _logRecordStyle, _logPanel, _logEntries
-    _logRecords = records
-    _logRecordStyle = isShortMode
-    _logPanel = self
-    now = _battleLogNow()
-    existing = list(_logEntries)
-    synchronized = []
-    used = []
-    for record in records or []:
-        match = None
-        for index, (expiry, oldRecord) in enumerate(existing):
-            if index not in used and oldRecord == record:
-                match = (expiry, oldRecord)
-                used.append(index)
-                break
-        if match is None:
-            match = (now + float(g_configParams.battleLogDuration()), record)
-        synchronized.append(match)
-    _logEntries = synchronized
-    _renderBattleLog(self)
-    _scheduleBattleLogExpiry(self)
-
-
-def _patched_log_addToTopLog(self, value, actionTypeImg, vehicleTypeImg,
-                             vehicleName, shellTypeStr, shellTypeBG,
-                             shellModeImg=None):
-    _orig_log_addToTopLog(self, value, actionTypeImg, vehicleTypeImg,
-                           vehicleName, shellTypeStr, shellTypeBG, shellModeImg)
-    _addBattleLogRecord(self, (value, actionTypeImg, vehicleTypeImg,
-                               vehicleName, shellTypeStr, shellTypeBG,
-                               shellModeImg))
+def _patched_log_setSettings(self, isVisible, isColorBlind):
+    global _logBaseVisible, _logColorBlind
+    _logBaseVisible = bool(isVisible)
+    _logColorBlind = bool(isColorBlind)
+    _applyBattleLogVisibility(self)
 
 
 def _patched_log_handleShowExtendedInfo(self, event):
@@ -428,24 +349,21 @@ def _getPlayerName(vInfo):
 
 
 def _applyBattleLogPatch():
-    global _DamageLogPanel, _orig_log_updateTopLog
-    global _orig_log_addToTopLog, _orig_log_handleShowExtendedInfo
-    global _LOG_PATCHED, _logAltDown, _logRecords, _logEntries, _logPanel
+    global _DamageLogPanel, _orig_log_setSettings
+    global _orig_log_handleShowExtendedInfo, _LOG_PATCHED
+    global _logAltDown, _logBaseVisible, _logColorBlind
     if _LOG_PATCHED:
         return
     try:
         from gui.Scaleform.daapi.view.battle.shared.damage_log_panel import DamageLogPanel
         _DamageLogPanel = DamageLogPanel
-        _orig_log_updateTopLog = DamageLogPanel._updateTopLog
-        _orig_log_addToTopLog = DamageLogPanel._addToTopLog
+        _orig_log_setSettings = DamageLogPanel._setSettings
         _orig_log_handleShowExtendedInfo = DamageLogPanel._handleShowExtendedInfo
-        DamageLogPanel._updateTopLog = _patched_log_updateTopLog
-        DamageLogPanel._addToTopLog = _patched_log_addToTopLog
+        DamageLogPanel._setSettings = _patched_log_setSettings
         DamageLogPanel._handleShowExtendedInfo = _patched_log_handleShowExtendedInfo
         _logAltDown = False
-        _logRecords = None
-        _logEntries = []
-        _logPanel = None
+        _logBaseVisible = True
+        _logColorBlind = False
         _LOG_PATCHED = True
         _log('Gefechtslog-Patch aktiv.')
     except Exception:
@@ -453,32 +371,20 @@ def _applyBattleLogPatch():
 
 
 def _removeBattleLogPatch():
-    global _orig_log_updateTopLog, _orig_log_addToTopLog
+    global _orig_log_setSettings
     global _orig_log_handleShowExtendedInfo, _LOG_PATCHED
-    global _logClearCallback, _logAltDown, _logRecords, _DamageLogPanel
-    global _logEntries, _logPanel
-    if _logClearCallback is not None:
-        try:
-            BigWorld.cancelCallback(_logClearCallback)
-        except Exception:
-            pass
-        _logClearCallback = None
+    global _logAltDown, _logBaseVisible, _DamageLogPanel
     if not _LOG_PATCHED:
         return
-    if _orig_log_updateTopLog is not None:
-        _DamageLogPanel._updateTopLog = _orig_log_updateTopLog
-    if _orig_log_addToTopLog is not None:
-        _DamageLogPanel._addToTopLog = _orig_log_addToTopLog
+    if _orig_log_setSettings is not None:
+        _DamageLogPanel._setSettings = _orig_log_setSettings
     if _orig_log_handleShowExtendedInfo is not None:
         _DamageLogPanel._handleShowExtendedInfo = _orig_log_handleShowExtendedInfo
-    _orig_log_updateTopLog = None
-    _orig_log_addToTopLog = None
+    _orig_log_setSettings = None
     _orig_log_handleShowExtendedInfo = None
     _DamageLogPanel = None
     _logAltDown = False
-    _logRecords = None
-    _logEntries = []
-    _logPanel = None
+    _logBaseVisible = True
     _LOG_PATCHED = False
 
 
@@ -486,8 +392,8 @@ def _applyPatch():
     global _orig_handleShowExtendedInfo, _orig_setVehicleInfo, _orig_setActive
     global _orig_setSettings, _orig_updateSettings, _PATCHED
     global _altDown, _vehInfo, _resetDone
-    global _orig_log_updateTopLog, _orig_log_addToTopLog
-    global _orig_log_handleShowExtendedInfo, _logAltDown, _logRecords
+    global _orig_log_setSettings, _orig_log_handleShowExtendedInfo
+    global _logAltDown, _logBaseVisible
     if _PATCHED:
         return
     if not _modEnabled():

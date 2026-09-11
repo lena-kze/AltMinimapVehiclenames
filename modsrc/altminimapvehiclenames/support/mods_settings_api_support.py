@@ -80,9 +80,7 @@ def _createBattleLogSettingsPart():
     return _emptyLine(2) + [
         {'type': 'Label', 'text': Tr.BATTLE_LOG_SETTINGS_LABEL},
         g_configParams.battleLogMode.renderParam(
-            header=Tr.BATTLE_LOG_MODE_HEADER, body=Tr.BATTLE_LOG_MODE_BODY),
-        g_configParams.battleLogDuration.renderParam(
-            header=Tr.BATTLE_LOG_DURATION_HEADER, body=Tr.BATTLE_LOG_DURATION_BODY)]
+            header=Tr.BATTLE_LOG_MODE_HEADER, body=Tr.BATTLE_LOG_MODE_BODY)]
 
 
 def _createRainbowText(text):

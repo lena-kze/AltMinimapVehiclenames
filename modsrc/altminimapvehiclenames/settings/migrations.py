@@ -37,7 +37,6 @@ def _migrateV3ToV4(configDict):
 
 def _migrateV4ToV5(configDict):
     configDict.setdefault('battle-log-mode', 'always')
-    configDict.setdefault('battle-log-duration', 5.0)
 
 
 _MIGRATIONS = {

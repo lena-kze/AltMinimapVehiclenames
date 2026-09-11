@@ -91,7 +91,6 @@ g_configParams = _t.SimpleNamespace(
     markEnemySquads=_FakeParam(True),
     enemySquadStarPosition=_FakeParam(_EnemySquadStarPosition.AFTER),
     battleLogMode=_FakeParam(_BattleLogMode.ALWAYS),
-    battleLogDuration=_FakeParam(5.0),
 )
 
 _stubParams = _t.ModuleType("altminimapvehiclenames.settings.config_param")
@@ -564,41 +563,37 @@ check("Reset: _vehInfo geleert", 9 not in ns["_vehInfo"])
 ns["_ensureInitialReset"](bpR)
 check("Reset: laeuft nur einmal", bpR.ctrl_calls == [False])
 
-# ---------------- GEFechtslog: individuelle Ablaufzeit + ALT-Sichtbarkeit ----------------
-clock = [0.0]
-callbacks = []
-logRenders = []
-bigWorld = ns["BigWorld"]
-bigWorld.time = lambda: clock[0]
-bigWorld.callback = lambda delay, fn: callbacks.append((delay, fn)) or len(callbacks)
-bigWorld.cancelCallback = lambda callback: None
-ns["_orig_log_updateTopLog"] = (
-    lambda panel, visible, shortMode, records:
-        logRenders.append((visible, list(records))))
-ns["_orig_log_addToTopLog"] = lambda *args, **kwargs: None
+# ---------------- Gefechtslog: Sichtbarkeit ueber das _setSettings-Gate ----------------
+setCalls = []
+ns["_orig_log_setSettings"] = lambda panel, visible, colorBlind: setCalls.append((visible, colorBlind))
 ns["_orig_log_handleShowExtendedInfo"] = lambda panel, event: None
-ns["_logEntries"] = []
-ns["_logRecords"] = None
-ns["_logRecordStyle"] = False
-ns["_logClearCallback"] = None
-ns["_logAltDown"] = True
-g_configParams.battleLogDuration.value = 5.0
-g_configParams.battleLogMode.value = _BattleLogMode.ON_ALT
-logPanel = _t.SimpleNamespace()
-ns["_patched_log_addToTopLog"](
-    logPanel, 'value', 'action', 'vehicle', 'Tank', 'shell', 'bg')
-check("Gefechtslog: Eintrag bei ALT sichtbar", logRenders[-1] == (True, [
-    ('value', 'action', 'vehicle', 'Tank', 'shell', 'bg', None)]))
+ns["_logBaseVisible"] = True
+ns["_logColorBlind"] = False
 ns["_logAltDown"] = False
+logPanel = _t.SimpleNamespace()
+
+g_configParams.battleLogMode.value = _BattleLogMode.ALWAYS
+ns["_patched_log_setSettings"](logPanel, True, True)
+check("Gefechtslog: Immer -> Spiel-Sichtbarkeit durchgereicht",
+      setCalls[-1] == (True, True))
+ns["_patched_log_setSettings"](logPanel, False, True)
+check("Gefechtslog: Immer -> ausgeblendet, wenn Spiel es will",
+      setCalls[-1] == (False, True))
+
+g_configParams.battleLogMode.value = _BattleLogMode.ON_ALT
+ns["_logAltDown"] = False
+ns["_patched_log_setSettings"](logPanel, True, False)
+check("Gefechtslog: on-alt ohne ALT -> ausgeblendet", setCalls[-1] == (False, False))
+event = _t.SimpleNamespace(ctx={"isDown": True})
+ns["_patched_log_handleShowExtendedInfo"](logPanel, event)
+check("Gefechtslog: ALT-Event blendet ein", setCalls[-1] == (True, False))
+ns["_logAltDown"] = True
 ns["_applyBattleLogVisibility"](logPanel)
-check("Gefechtslog: ALT blendet nur aus", logRenders[-1] == (False, [
-    ('value', 'action', 'vehicle', 'Tank', 'shell', 'bg', None)]))
-clock[0] = 4.0
+check("Gefechtslog: on-alt mit ALT -> sichtbar", setCalls[-1] == (True, False))
+
+g_configParams.battleLogMode.value = _BattleLogMode.NEVER
 ns["_applyBattleLogVisibility"](logPanel)
-check("Gefechtslog: Eintrag bleibt vor Ablauf gepuffert", logRenders[-1][1])
-clock[0] = 5.0
-callbacks[-1][1]()
-check("Gefechtslog: Eintrag läuft einzeln ab", ns["_logEntries"] == [])
+check("Gefechtslog: nie -> immer ausgeblendet", setCalls[-1] == (False, False))
 
 
 print("")

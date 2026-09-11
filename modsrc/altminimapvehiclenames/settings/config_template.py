@@ -65,9 +65,6 @@ CONFIG_TEMPLATE = '''{
     // Controls visibility of the battle log above the minimap.
     "battle-log-mode": %(battle-log-mode)s,
 
-    // Display duration of a battle log entry in seconds (default: 5.0).
-    "battle-log-duration": %(battle-log-duration)s,
-
     // DO NOT touch "__version__" field
     "__version__": 5
 }

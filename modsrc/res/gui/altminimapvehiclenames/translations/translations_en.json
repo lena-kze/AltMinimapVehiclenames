@@ -70,10 +70,6 @@
     "- Only on ALT - only while ALT is pressed,\n",
     "- Never - the battle log is not displayed."
   ],
-  "battle-log-duration.header": "Battle log entry display time",
-  "battle-log-duration.body": [
-    "Determines how many seconds a new battle log entry remains visible."
-  ],
   "battle-log.option.always": "Always",
   "battle-log.option.on-alt": "Only on ALT",
   "battle-log.option.never": "Never",

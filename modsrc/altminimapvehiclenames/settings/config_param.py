@@ -77,9 +77,6 @@ class ConfigParams(object):
             'battle-log-mode'], list(_BATTLE_LOG_OPTIONS),
             defaultValue=BattleLogMode.ALWAYS,
             disabledValue=BattleLogMode.ALWAYS)
-        self.battleLogDuration = SliderParam([
-            'battle-log-duration'], toPositiveFloat, 1.0, 0.5, 10.0,
-            defaultValue=5.0, disabledValue=5.0)
 
     @staticmethod
     def items():

@@ -71,10 +71,6 @@
     "- Nur bei ALT - nur bei gedrückter ALT-Taste,\n",
     "- Nie - der Gefechtslog wird nicht angezeigt."
   ],
-  "battle-log-duration.header": "Anzeigedauer des Gefechtslog-Eintrags",
-  "battle-log-duration.body": [
-    "Legt fest, wie viele Sekunden ein neuer Gefechtslog-Eintrag sichtbar bleibt."
-  ],
   "battle-log.option.always": "Immer",
   "battle-log.option.on-alt": "Nur bei ALT",
   "battle-log.option.never": "Nie",
