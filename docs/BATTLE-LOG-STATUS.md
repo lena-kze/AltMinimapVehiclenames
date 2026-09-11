@@ -16,6 +16,16 @@ Stand: 2026-09-11
 - Die Implementierung wird **später gemeinsam** überarbeitet. Dieser Build ist
   als Teststand zu verstehen, nicht als fertiges Feature.
 
-## Stable 1.1.3
+## Vorgehen für die Überarbeitung
+
+- Es gibt den Git-Branch **`nightly`** (Basis: stable-Master).
+  Die spätere Neuimplementierung wird auf diesem Branch entwickelt und dann
+  nach master gemerged. Bis dahin läuft die 1.1.3-nightly-Referenz
+  (`094eb9c`, Tag `v1.1.3-nightly`) historisch weiter.
+- Ein neues Nightly-Build wird also auf `nightly` gesetzt, nicht direkt auf master.
+
+## Stable 1.1.3 / 1.1.4
 
 - Enthält das Gefechtslog-Feature NICHT (Verhalten wie vor 1.1.2).
+- 1.1.4: neue Option "Nur-Sternchen für gegnerische Zugmitglieder" (potentiell
+  kombinierbar mit dem späteren Battle-Log-Nightly).
