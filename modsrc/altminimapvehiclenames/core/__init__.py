@@ -1,6 +1,7 @@
 # AltMinimapVehiclenames - battle logic (ArenaVehiclesPlugin patching)
 
 import logging
+import time
 import BigWorld
 
 from PlayerEvents import g_playerEvents
@@ -24,6 +25,8 @@ _logAltDown = False
 _logRecords = None
 _logRecordStyle = False
 _logClearCallback = None
+_logEntries = []
+_logPanel = None
 _DamageLogPanel = None
 _orig_log_updateTopLog = None
 _orig_log_addToTopLog = None
@@ -212,46 +215,90 @@ def _entryVehicleID(plugin, entry):
     return None
 
 
-def _clearBattleLog(panel):
-    try:
-        panel._topLog.clear()
-    except Exception:
-        _logger.exception('%s Fehler beim Leeren des Gefechtslogs', _TAG)
+def _battleLogNow():
+    gameTime = getattr(BigWorld, 'time', None)
+    if callable(gameTime):
+        return gameTime()
+    return time.time()
 
 
-def _scheduleBattleLogClear(panel):
+def _renderBattleLog(panel):
+    if _orig_log_updateTopLog is None:
+        return
+    activeRecords = [record for expiry, record in _logEntries
+                     if expiry > _battleLogNow()]
+    _orig_log_updateTopLog(panel, _battleLogVisible(), _logRecordStyle, activeRecords)
+
+
+def _scheduleBattleLogExpiry(panel):
     global _logClearCallback
     if _logClearCallback is not None:
         try:
             BigWorld.cancelCallback(_logClearCallback)
         except Exception:
             pass
-    _logClearCallback = BigWorld.callback(
-        float(g_configParams.battleLogDuration()),
-        lambda: _clearBattleLog(panel))
+    if not _logEntries:
+        _logClearCallback = None
+        return
+    delay = max(0.0, min(expiry for expiry, record in _logEntries) - _battleLogNow())
+    _logClearCallback = BigWorld.callback(delay, lambda: _onBattleLogExpiry(panel))
+
+
+def _onBattleLogExpiry(panel):
+    global _logEntries, _logClearCallback
+    now = _battleLogNow()
+    _logEntries = [(expiry, record) for expiry, record in _logEntries if expiry > now]
+    _logClearCallback = None
+    _renderBattleLog(panel)
+    _scheduleBattleLogExpiry(panel)
+
+
+def _addBattleLogRecord(panel, record):
+    now = _battleLogNow()
+    if not any(existing == record for expiry, existing in _logEntries):
+        _logEntries.append((now + float(g_configParams.battleLogDuration()), record))
+    _renderBattleLog(panel)
+    _scheduleBattleLogExpiry(panel)
 
 
 def _applyBattleLogVisibility(panel):
-    if _logRecords is None:
+    if _logRecords is None and not _logEntries:
         return
-    _orig_log_updateTopLog(
-        panel, _battleLogVisible(), _logRecordStyle, _logRecords)
+    _renderBattleLog(panel)
 
 
 def _patched_log_updateTopLog(self, isVisible, isShortMode, records):
-    global _logRecords, _logRecordStyle
+    global _logRecords, _logRecordStyle, _logPanel, _logEntries
     _logRecords = records
     _logRecordStyle = isShortMode
-    _orig_log_updateTopLog(self, _battleLogVisible(), isShortMode, records)
+    _logPanel = self
+    now = _battleLogNow()
+    existing = list(_logEntries)
+    synchronized = []
+    used = []
+    for record in records or []:
+        match = None
+        for index, (expiry, oldRecord) in enumerate(existing):
+            if index not in used and oldRecord == record:
+                match = (expiry, oldRecord)
+                used.append(index)
+                break
+        if match is None:
+            match = (now + float(g_configParams.battleLogDuration()), record)
+        synchronized.append(match)
+    _logEntries = synchronized
+    _renderBattleLog(self)
+    _scheduleBattleLogExpiry(self)
 
 
 def _patched_log_addToTopLog(self, value, actionTypeImg, vehicleTypeImg,
                              vehicleName, shellTypeStr, shellTypeBG,
                              shellModeImg=None):
     _orig_log_addToTopLog(self, value, actionTypeImg, vehicleTypeImg,
-                          vehicleName, shellTypeStr, shellTypeBG, shellModeImg)
-    if _battleLogMode() != BattleLogMode.NEVER:
-        _scheduleBattleLogClear(self)
+                           vehicleName, shellTypeStr, shellTypeBG, shellModeImg)
+    _addBattleLogRecord(self, (value, actionTypeImg, vehicleTypeImg,
+                               vehicleName, shellTypeStr, shellTypeBG,
+                               shellModeImg))
 
 
 def _patched_log_handleShowExtendedInfo(self, event):
@@ -383,7 +430,7 @@ def _getPlayerName(vInfo):
 def _applyBattleLogPatch():
     global _DamageLogPanel, _orig_log_updateTopLog
     global _orig_log_addToTopLog, _orig_log_handleShowExtendedInfo
-    global _LOG_PATCHED, _logAltDown, _logRecords
+    global _LOG_PATCHED, _logAltDown, _logRecords, _logEntries, _logPanel
     if _LOG_PATCHED:
         return
     try:
@@ -397,6 +444,8 @@ def _applyBattleLogPatch():
         DamageLogPanel._handleShowExtendedInfo = _patched_log_handleShowExtendedInfo
         _logAltDown = False
         _logRecords = None
+        _logEntries = []
+        _logPanel = None
         _LOG_PATCHED = True
         _log('Gefechtslog-Patch aktiv.')
     except Exception:
@@ -407,6 +456,7 @@ def _removeBattleLogPatch():
     global _orig_log_updateTopLog, _orig_log_addToTopLog
     global _orig_log_handleShowExtendedInfo, _LOG_PATCHED
     global _logClearCallback, _logAltDown, _logRecords, _DamageLogPanel
+    global _logEntries, _logPanel
     if _logClearCallback is not None:
         try:
             BigWorld.cancelCallback(_logClearCallback)
@@ -427,6 +477,8 @@ def _removeBattleLogPatch():
     _DamageLogPanel = None
     _logAltDown = False
     _logRecords = None
+    _logEntries = []
+    _logPanel = None
     _LOG_PATCHED = False
 
 

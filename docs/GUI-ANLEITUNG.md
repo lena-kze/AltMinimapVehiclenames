@@ -1,9 +1,3 @@
-# FFDec (GUI)-Anleitung – AltMinimapVehiclenames
-
-Du patchest die `battle.swf` von Hand in der FFDec-GUI (so wie früher). Davor wirf bitte einen Blick
-in den fertigen Quellcode unter `src/scripts/` – dort sind alle drei Klassen bereits fertig
-implementiert. Die Schritte unten sagen dir, welche Änderungen du in jeder Klasse eintragen musst.
-
 ## Zielverhalten
 - **Gegner (Enemy): Namen IMMER sichtbar** (standard unabhängig von Alt)
 - **Verbündete (Ally): Namen nur sichtbar, solange ALT gedrückt**
