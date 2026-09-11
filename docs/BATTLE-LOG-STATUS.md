@@ -27,5 +27,5 @@ Stand: 2026-09-11
 ## Stable 1.1.3 / 1.1.4
 
 - Enthält das Gefechtslog-Feature NICHT (Verhalten wie vor 1.1.2).
-- 1.1.4: neue Option "Nur-Sternchen für gegnerische Zugmitglieder" (potentiell
-  kombinierbar mit dem späteren Battle-Log-Nightly).
+- 1.1.4: neue Option "Zug-Sternchen auch bei ausgeblendeten Bezeichnungen"
+  (potentiell kombinierbar mit dem späteren Battle-Log-Nightly).

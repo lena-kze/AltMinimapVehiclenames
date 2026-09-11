@@ -62,9 +62,10 @@
   "enemy-squad-star-position.body": [
     "Controls where the star is displayed on enemy platoon vehicle names."
   ],
-  "enemy-squad-star-only.header": "Star only for enemy platoon members",
+  "enemy-squad-star-only.header": "Platoon star also when labels hidden",
   "enemy-squad-star-only.body": [
-    "Shows only a star instead of the vehicle name on the minimap for enemy platoon members - even when enemy labels are hidden. Makes it easier to spot platoon members."
+    "Keeps the star visible for enemy platoon members even while their label is hidden by the mode - e.g. while ALT is pressed.\n",
+    "Requires 'Mark enemy platoons'. Only relevant for 'Only on ALT' or 'Hide on ALT'; unnecessary with 'Always', with 'Never' the stars stay hidden too."
   ],
   "credits.label": "Von Lena_Kze in Deutschland gemacht. <3"
 }

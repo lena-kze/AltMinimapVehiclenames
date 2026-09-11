@@ -63,8 +63,9 @@ CONFIG_TEMPLATE = '''{
 
     // Valid values: true/false (default: false)
     //
-    // Shows ONLY a star (no vehicle name) on the minimap for enemy platoon
-    // members, even when enemy labels are hidden.
+    // Keeps the enemy platoon star visible on the minimap even while the
+    // enemy vehicle names are hidden by the enemy-names mode (only relevant
+    // for "show-on-alt"/"hide-on-alt"). Requires "mark-enemy-squads".
     "enemy-squad-star-only": %(enemy-squad-star-only)s,
 
     // DO NOT touch "__version__" field
