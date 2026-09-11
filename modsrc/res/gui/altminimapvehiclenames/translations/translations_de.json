@@ -57,7 +57,7 @@
   "star-position.option.after": "Bezeichnung*",
   "mark-enemy-squads.header": "Gegnerische Züge auf Minimap mit * markieren",
   "mark-enemy-squads.body": [
-    "Zeigt ein * hinter der Fahrzeugbezeichnung von Zugmitgliedern im roten Team."
+    "Markiert Zugmitglieder im roten Team auf der Minimap mit einem Sternchen. Die Position des Sternchens kannst du im Dropdown darunter einstellen."
   ],
   "enemy-squad-star-position.header": "Position der Sternchen bei Gegner-Zügen",
   "enemy-squad-star-position.body": [
