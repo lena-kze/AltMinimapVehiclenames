@@ -58,19 +58,32 @@ def _squadNameContent(isDown):
 
 def _squadDisplayedName(info, isDown):
     if info.get('isForeignSquad'):
-        if info.get('isEnemy') and g_configParams.markEnemySquads():
-            position = g_configParams.enemySquadStarPosition()
-            if position == EnemySquadStarPosition.BEFORE:
-                return '*' + info['vehicleName']
-            if position == EnemySquadStarPosition.BOTH:
-                return '*' + info['vehicleName'] + '*'
-            return info['vehicleName'] + '*'
+        if info.get('isEnemy'):
+            if g_configParams.enemySquadStarOnly():
+                return '*'
+            if g_configParams.markEnemySquads():
+                position = g_configParams.enemySquadStarPosition()
+                if position == EnemySquadStarPosition.BEFORE:
+                    return '*' + info['vehicleName']
+                if position == EnemySquadStarPosition.BOTH:
+                    return '*' + info['vehicleName'] + '*'
+                return info['vehicleName'] + '*'
         return info['vehicleName']
     if not info.get('isOwnSquad'):
         return info['vehicleName']
     if _squadNameContent(isDown) == SquadNameContent.VEHICLE:
         return info['vehicleName']
     return info['playerName']
+
+
+def _enemySquadStarOnlyVisible(entry, info):
+    """True, wenn fuer diesen gegnerischen Zug-Eintrag NUR ein Sternchen
+    angezeigt werden soll (unabhaengig vom Feind-Sichtbarkeitsmodus)."""
+    if not g_configParams.enemySquadStarOnly():
+        return False
+    if info is None:
+        return False
+    return bool(entry.isEnemy() and info.get('isSquad') and info.get('isEnemy'))
 
 
 # ---------------------------------------------------------------------------
@@ -110,6 +123,9 @@ def _applyEntryNameVisibility(plugin, entry, altPressed, info=None):
     Der eigentliche Namens-INHALT fuer Zugmitglieder (Spielername/
     Fahrzeugname) wird separat in _applySquadNames gesteuert.
     """
+    if _enemySquadStarOnlyVisible(entry, info):
+        plugin._invoke(entry.getID(), 'showVehicleName')
+        return
     mode = _modeFor(entry, info)
     if _visibleInMode(mode, altPressed):
         plugin._invoke(entry.getID(), 'showVehicleName')
@@ -151,7 +167,7 @@ def _applySquadNames(plugin, isDown):
             continue
         try:
             if info.get('isForeignSquad'):
-                if g_configParams.markEnemySquads():
+                if g_configParams.markEnemySquads() or g_configParams.enemySquadStarOnly():
                     plugin._invoke(entry.getID(), 'setVehicleInfo', vehicleID,
                                  info['classTag'], _squadDisplayedName(info, isDown),
                                  info['guiPropsName'], '')
@@ -251,7 +267,8 @@ def _patched_setVehicleInfo(self, vehicleID, entry, vInfo, guiProps, isSpotted=F
         }
         _vehInfo[vehicleID] = info
         _applyEntryNameVisibility(self, entry, _altDown, info)
-        if isSquad and isEnemy and g_configParams.markEnemySquads():
+        if isSquad and isEnemy and (
+                g_configParams.markEnemySquads() or g_configParams.enemySquadStarOnly()):
             self._invoke(entry.getID(), 'setVehicleInfo', vehicleID,
                          info['classTag'], _squadDisplayedName(info, _altDown),
                          info['guiPropsName'], '')

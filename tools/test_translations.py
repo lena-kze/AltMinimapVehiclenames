@@ -84,6 +84,10 @@ check("squad-names-alt.header EN",
       en.get("squad-names-alt.header") == "Squad member label variable With ALT key")
 check("credits DE", de.get("credits.label") == "Von Lena_Kze in Deutschland gemacht. <3")
 check("mark-enemy-squads DE", de.get("mark-enemy-squads.header") == "Gegnerische Züge auf Minimap mit * markieren")
+check("enemy-squad-star-only DE",
+      de.get("enemy-squad-star-only.header") == "Nur Sternchen für gegnerische Zugmitglieder")
+check("enemy-squad-star-only EN",
+      en.get("enemy-squad-star-only.header") == "Star only for enemy platoon members")
 check("star-position options DE",
       [de.get("star-position.option.before"), de.get("star-position.option.both"),
       de.get("star-position.option.after")] == ["*Bezeichnung", "*Bezeichnung*", "Bezeichnung*"])

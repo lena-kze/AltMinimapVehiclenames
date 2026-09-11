@@ -131,6 +131,8 @@ class Tr(object):
     MARK_ENEMY_SQUADS_BODY = TranslationElement('mark-enemy-squads.body')
     ENEMY_SQUAD_STAR_POSITION_HEADER = TranslationElement('enemy-squad-star-position.header')
     ENEMY_SQUAD_STAR_POSITION_BODY = TranslationElement('enemy-squad-star-position.body')
+    ENEMY_SQUAD_STAR_ONLY_HEADER = TranslationElement('enemy-squad-star-only.header')
+    ENEMY_SQUAD_STAR_ONLY_BODY = TranslationElement('enemy-squad-star-only.body')
     OPTION_SHOW_ON_ALT = TranslationElement('option.show-on-alt')
     OPTION_HIDE_ON_ALT = TranslationElement('option.hide-on-alt')
     OPTION_ALWAYS = TranslationElement('option.always')

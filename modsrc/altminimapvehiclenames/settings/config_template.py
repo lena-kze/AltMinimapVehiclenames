@@ -61,7 +61,13 @@ CONFIG_TEMPLATE = '''{
     // Controls the position of the star on enemy platoon vehicle names.
     "enemy-squad-star-position": %(enemy-squad-star-position)s,
 
+    // Valid values: true/false (default: false)
+    //
+    // Shows ONLY a star (no vehicle name) on the minimap for enemy platoon
+    // members, even when enemy labels are hidden.
+    "enemy-squad-star-only": %(enemy-squad-star-only)s,
+
     // DO NOT touch "__version__" field
-    "__version__": 5
+    "__version__": 6
 }
 '''

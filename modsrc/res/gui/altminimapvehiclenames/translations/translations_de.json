@@ -63,5 +63,9 @@
   "enemy-squad-star-position.body": [
     "Legt fest, wo das Sternchen bei gegnerischen Zugmitgliedern angezeigt wird."
   ],
+  "enemy-squad-star-only.header": "Nur Sternchen für gegnerische Zugmitglieder",
+  "enemy-squad-star-only.body": [
+    "Zeigt für gegnerische Zugmitglieder auf der Minimap nur ein Sternchen statt des Fahrzeugnamens – auch wenn feindliche Bezeichnungen ausgeblendet sind. Erleichtert das Erkennen von Zugmitgliedern."
+  ],
   "credits.label": "Von Lena_Kze in Deutschland gemacht. <3"
 }

@@ -84,6 +84,7 @@ g_configParams = _t.SimpleNamespace(
     squadNamesAlt=_FakeParam(_SquadNameContent.VEHICLE),
     markEnemySquads=_FakeParam(True),
     enemySquadStarPosition=_FakeParam(_EnemySquadStarPosition.AFTER),
+    enemySquadStarOnly=_FakeParam(False),
 )
 
 _stubParams = _t.ModuleType("altminimapvehiclenames.settings.config_param")
@@ -169,6 +170,7 @@ def resetParams():
 
 
 resetParams()
+g_configParams.enemySquadStarOnly.value = False
 plugin = FakePlugin()
 enemy = Entry(1, True)
 ally = Entry(2, False)
@@ -337,6 +339,51 @@ for position, expected in ((_EnemySquadStarPosition.BEFORE, '*EnemyTank'),
     inv = [a for (i, n, a) in enemySquadPlugin.all_invokes if n == "setVehicleInfo"][-1]
     check("Gegnerischer Zug Sternposition %s" % position, inv[2] == expected)
 g_configParams.enemySquadStarPosition.value = _EnemySquadStarPosition.AFTER
+
+# Nur-Sternchen fuer gegnerische Zugmitglieder (enemy-squad-star-only)
+g_configParams.enemySquadStarOnly.value = True
+g_configParams.enemyNames.value = _TeamNamesMode.SHOW_ON_ALT
+starOnlyPlugin = FakePlugin()
+starOnlyPlugin._entries = {8: Entry(8, True)}
+ns["_applySquadNames"](starOnlyPlugin, False)
+starInv = [a for (i, n, a) in starOnlyPlugin.all_invokes if n == "setVehicleInfo"][-1]
+check("Nur-Sternchen: Name ist nur '*'", starInv[2] == "*")
+check("Nur-Sternchen: trotz show-on-alt ohne Alt sichtbar",
+      starOnlyPlugin.invoked[-1] == (8, "showVehicleName"))
+g_configParams.enemySquadStarOnly.value = False
+starOffPlugin = FakePlugin()
+starOffPlugin._entries = {8: Entry(8, True)}
+ns["_applySquadNames"](starOffPlugin, False)
+starOffInv = [a for (i, n, a) in starOffPlugin.all_invokes if n == "setVehicleInfo"][-1]
+check("Nur-Sternchen aus: Rueckfall auf markieren (Stern+Name)",
+      starOffInv[2] == "EnemyTank*")
+g_configParams.markEnemySquads.value = False
+g_configParams.enemySquadStarOnly.value = True
+starNoMarkPlugin = FakePlugin()
+starNoMarkPlugin._entries = {8: Entry(8, True)}
+ns["_applySquadNames"](starNoMarkPlugin, False)
+starNoMarkInv = [a for (i, n, a) in starNoMarkPlugin.all_invokes if n == "setVehicleInfo"][-1]
+check("Nur-Sternchen auch ohne Markierung: nur '*'", starNoMarkInv[2] == "*")
+g_configParams.enemySquadStarOnly.value = False
+g_configParams.markEnemySquads.value = True
+g_configParams.enemyNames.value = _TeamNamesMode.HIDE_ON_ALT
+
+# _patched_setVehicleInfo: gegnerischer Zug erscheint neu, nur-Sternchen
+bpSqF = FakePlugin()
+eF = Entry(8, True)
+vF = _t.SimpleNamespace(
+    isSquadMan=lambda: True, vehicleType=_t.SimpleNamespace(classTag='HT-XX'),
+    player=_t.SimpleNamespace(name='EnemyPlayer'), vehicleName='EnemyTank')
+swF = _t.MethodType(ns["_patched_setVehicleInfo"], bpSqF)
+ns["_altDown"] = False
+g_configParams.enemySquadStarOnly.value = True
+swF(8, eF, vF, _t.SimpleNamespace(isFriend=False, name='enemy'))
+invF = [a for (i, n, a) in bpSqF.all_invokes if n == "setVehicleInfo"][-1]
+check("setVehicleInfo gegn. Zug: nur-Sternchen Name '*'", invF[2] == "*")
+check("setVehicleInfo gegn. Zug: sichtbar",
+      (8, "showVehicleName") in bpSqF.invoked)
+g_configParams.enemySquadStarOnly.value = False
+ns["_vehInfo"].pop(8, None)
 
 # Squad-names Modus "always" (Standard): ohne Alt Spielername, mit Alt Fahrzeugname
 plugin5.invoked = []

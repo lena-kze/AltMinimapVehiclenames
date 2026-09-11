@@ -61,6 +61,8 @@ class ConfigParams(object):
             'enemy-squad-star-position'], list(_ENEMY_SQUAD_STAR_OPTIONS),
             defaultValue=EnemySquadStarPosition.AFTER,
             disabledValue=EnemySquadStarPosition.AFTER)
+        self.enemySquadStarOnly = BooleanParam([
+            'enemy-squad-star-only'], defaultValue=False, disabledValue=False)
 
     @staticmethod
     def items():

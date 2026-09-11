@@ -173,7 +173,8 @@ registered = sorted(t for t, _ in g_configParams.items())
 check("Params registriert",
        registered == ["ally-names",
                       "enabled", "enemy-names",
-                      "enemy-squad-star-position", "mark-enemy-squads",
+                      "enemy-squad-star-only", "enemy-squad-star-position",
+                      "mark-enemy-squads",
                       "squad-names", "squad-names-alt", "squad-names-no-alt"])
 check("enemy-names default", same(g_configParams.enemyNames.defaultValue, "hide-on-alt"))
 check("ally-names default", same(g_configParams.allyNames.defaultValue, "show-on-alt"))
@@ -184,6 +185,8 @@ check("enabled default True", g_configParams.enabled.defaultValue is True)
 check("mark-enemy-squads default True", g_configParams.markEnemySquads.defaultValue is True)
 check("enemy-squad-star-position default after",
       g_configParams.enemySquadStarPosition.defaultValue == "after")
+check("enemy-squad-star-only default False",
+      g_configParams.enemySquadStarOnly.defaultValue is False)
 check("TeamNamesMode-Konstanten",
       {TeamNamesMode.SHOW_ON_ALT, TeamNamesMode.HIDE_ON_ALT,
        TeamNamesMode.ALWAYS, TeamNamesMode.NEVER}
@@ -252,8 +255,8 @@ g_configParams.enabled.jsonValue = True
 # 4) CONFIG_TEMPLATE: Platzhalter vollstaendig, JSON parsebar
 # ----------------------------------------------------------------------
 default_tokens = settings_mod.getDefaultConfigTokens()
-check("getDefaultConfigTokens: alle 8 Tokens",
-      sorted(default_tokens) == ["ally-names", "enabled", "enemy-names", "enemy-squad-star-position", "mark-enemy-squads", "squad-names", "squad-names-alt", "squad-names-no-alt"])
+check("getDefaultConfigTokens: alle 9 Tokens",
+      sorted(default_tokens) == ["ally-names", "enabled", "enemy-names", "enemy-squad-star-only", "enemy-squad-star-position", "mark-enemy-squads", "squad-names", "squad-names-alt", "squad-names-no-alt"])
 missing = re.findall(r'%\(([^)]*)\)s', CONFIG_TEMPLATE)
 check("Template-Platzhalter = Tokenliste", sorted(set(missing)) == sorted(default_tokens))
 rendered = CONFIG_TEMPLATE % default_tokens
@@ -278,7 +281,7 @@ d2 = config_file.g_configFiles.config.loadConfigDict()
 check("Roundtrip write/load: enemy-names", same(d2.get("enemy-names"), "always"))
 
 # ----------------------------------------------------------------------
-# 6) Migrations: V1 -> V2 -> V3 -> V4 -> V5
+# 6) Migrations: V1 -> V2 -> V3 -> V4 -> V5 -> V6
 # ----------------------------------------------------------------------
 legacy = {
     "enabled": True,
@@ -293,19 +296,21 @@ migrations.performConfigMigrations()
 d_legacy = config_file.g_configFiles.config.loadConfigDict()
 check("Migration V1->V3: squad-names default -> always",
       d_legacy.get("squad-names") == "always")
-check("Migration V1->V5: __version__ = 5",
-      d_legacy.get("__version__") == migrations.ConfigVersion.V5)
+check("Migration V1->V6: __version__ = 6",
+      d_legacy.get("__version__") == migrations.ConfigVersion.V6)
 check("Migration V1->V3: squad-names-no-alt/alt Standard",
       d_legacy.get("squad-names-no-alt") == "username"
        and d_legacy.get("squad-names-alt") == "vehicle")
 check("Migration V3->V4: Platoon-Markierungen aktiv",
       d_legacy.get("mark-enemy-squads") is True)
+check("Migration V5->V6: Nur-Sternchen inaktiv",
+      d_legacy.get("enemy-squad-star-only") is False)
 check("Migration V1->V3: uebrige Werte unveraendert",
       d_legacy.get("enemy-names") == "always"
        and d_legacy.get("ally-names") == "show-on-alt")
 second = dict(d_legacy)
 migrations.performConfigMigrations()
-check("Migration idempotent (V5 bleibt)", 
+check("Migration idempotent (V6 bleibt)", 
       config_file.g_configFiles.config.loadConfigDict() == second)
 check("isVersion(V1, 1) True",
       migrations.isVersion({"__version__": 1}, migrations.ConfigVersion.V1))
@@ -433,7 +438,7 @@ check("Dropdowns vorhanden", sorted(dropdown_names()) ==
               "enemy-squad-star-position"]))
 check("Platoon-Markierungen vorhanden",
        sorted(p.get("varName") for p in modal["column1"] if p.get("type") == "CheckBox")
-       == ["mark-enemy-squads"])
+       == ["enemy-squad-star-only", "mark-enemy-squads"])
 check("Sternposition-Dropdown vorhanden",
       [p.get("varName") for p in modal["column1"] if p.get("type") == "Dropdown"].count("enemy-squad-star-position") == 1)
 check("enemy-names 4 Optionen (DE)",
@@ -486,6 +491,7 @@ check("onConfigFileReload pusht alle Tokens",
       and sorted(pushed) == sorted(["enemy-names", "ally-names", "squad-names",
                                       "squad-names-no-alt", "squad-names-alt",
                                       "mark-enemy-squads", "enemy-squad-star-position",
+                                      "enemy-squad-star-only",
                                       "enabled"]))
 check("onConfigFileReload enemy-names msa 1 (hide-on-alt)",
       pushed["enemy-names"] == 1)

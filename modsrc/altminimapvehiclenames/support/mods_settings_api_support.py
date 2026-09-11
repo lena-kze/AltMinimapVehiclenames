@@ -69,7 +69,10 @@ def _createTeamSettingsPart():
       g_configParams.markEnemySquads.renderParam(header=Tr.MARK_ENEMY_SQUADS_HEADER, body=Tr.MARK_ENEMY_SQUADS_BODY),
       g_configParams.enemySquadStarPosition.renderParam(
           header=Tr.ENEMY_SQUAD_STAR_POSITION_HEADER,
-          body=Tr.ENEMY_SQUAD_STAR_POSITION_BODY)]
+          body=Tr.ENEMY_SQUAD_STAR_POSITION_BODY),
+      g_configParams.enemySquadStarOnly.renderParam(
+          header=Tr.ENEMY_SQUAD_STAR_ONLY_HEADER,
+          body=Tr.ENEMY_SQUAD_STAR_ONLY_BODY)]
 
 
 def _createCreditsPart():

@@ -62,5 +62,9 @@
   "enemy-squad-star-position.body": [
     "Controls where the star is displayed on enemy platoon vehicle names."
   ],
+  "enemy-squad-star-only.header": "Star only for enemy platoon members",
+  "enemy-squad-star-only.body": [
+    "Shows only a star instead of the vehicle name on the minimap for enemy platoon members - even when enemy labels are hidden. Makes it easier to spot platoon members."
+  ],
   "credits.label": "Von Lena_Kze in Deutschland gemacht. <3"
 }
