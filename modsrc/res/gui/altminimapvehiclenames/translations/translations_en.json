@@ -56,10 +56,7 @@
   "star-position.option.after": "Name*",
   "mark-enemy-squads.header": "Mark enemy platoons",
   "mark-enemy-squads.body": [
-    "Marks platoon members on the red team with a star. You can choose the star position in the dropdown below:\n",
-    "- *Name - star before the name,\n",
-    "- *Name* - star on both sides,\n",
-    "- Name* - star after the name."
+    "Marks platoon members on the red team with a star. You can choose the star position in the dropdown below."
   ],
   "enemy-squad-star-position.header": "Enemy platoon star position",
   "enemy-squad-star-position.body": [
