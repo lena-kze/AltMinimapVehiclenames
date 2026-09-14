@@ -13,7 +13,8 @@ class ConfigVersion(object):
     V4 = 4
     V5 = 5
     V6 = 6
-    CURRENT = V6
+    V7 = 7
+    CURRENT = V7
 
 
 def _migrateV1ToV2(configDict):
@@ -40,11 +41,17 @@ def _migrateV5ToV6(configDict):
     configDict.setdefault('enemy-squad-star-only', False)
 
 
+def _migrateV6ToV7(configDict):
+    configDict.setdefault('enemy-squad-star-position', 'after')
+    configDict.setdefault('enemy-squad-star-only', False)
+
+
 _MIGRATIONS = {
     ConfigVersion.V2: _migrateV1ToV2,
     ConfigVersion.V3: _migrateV2ToV3,
     ConfigVersion.V4: _migrateV3ToV4,
     ConfigVersion.V6: _migrateV5ToV6,
+    ConfigVersion.V7: _migrateV6ToV7,
 }
 
 

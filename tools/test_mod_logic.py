@@ -63,6 +63,9 @@ class _EnemySquadStarPosition(object):
     BEFORE = 'before'
     BOTH = 'both'
     AFTER = 'after'
+    NUMBER_BEFORE = 'number-before'
+    NUMBER_BOTH = 'number-both'
+    NUMBER_AFTER = 'number-after'
 
 
 class _FakeParam(object):
@@ -132,6 +135,8 @@ class FakePlugin(object):
         self.active_calls = []
         self.ctrl_calls = []
         self.orig_handle_calls = 0
+        self._arenaDP = _t.SimpleNamespace(
+            isSquadMan=lambda vehicleID: vehicleID in (5, 6, 7))
         self._parentObj = _t.SimpleNamespace()
         def _as_show(v):
             self.ctrl_calls.append(v)
@@ -167,10 +172,12 @@ def resetParams():
     g_configParams.enemyNames.value = _TeamNamesMode.HIDE_ON_ALT
     g_configParams.allyNames.value = _TeamNamesMode.SHOW_ON_ALT
     g_configParams.squadNames.value = _TeamNamesMode.ALWAYS
+    g_configParams.markEnemySquads.value = True
+    g_configParams.enemySquadStarPosition.value = _EnemySquadStarPosition.AFTER
+    g_configParams.enemySquadStarOnly.value = False
 
 
 resetParams()
-g_configParams.enemySquadStarOnly.value = False
 plugin = FakePlugin()
 enemy = Entry(1, True)
 ally = Entry(2, False)
@@ -290,6 +297,28 @@ vA = _t.SimpleNamespace(
 sw(4, e4, vA, _t.SimpleNamespace(isFriend=True, name='ally'))
 check("setVehicleInfo Ally -> hideVehicleName", bp3.invoked[-1] == (4, "hideVehicleName"))
 
+# Andere verbuendete Zuege sind keine eigenen Zugmitglieder. Die
+# squad-names-Einstellungen duerfen weder ihren Namen ueberschreiben noch
+# ihren Sichtbarkeitsmodus steuern.
+g_configParams.squadNames.value = _TeamNamesMode.NEVER
+bpForeign = FakePlugin()
+bpForeign._entries = {10: Entry(10, False)}
+swForeign = _t.MethodType(ns["_patched_setVehicleInfo"], bpForeign)
+vForeign = _t.SimpleNamespace(
+    isSquadMan=lambda: True, vehicleType=_t.SimpleNamespace(classTag='MT-2'),
+    player=_t.SimpleNamespace(name='OtherAllyPlayer'), vehicleName='OtherAllyTank',
+    squadIndex=1)
+swForeign(10, Entry(10, False), vForeign, _t.SimpleNamespace(isFriend=True, name='ally'))
+foreignInfo = ns["_vehInfo"][10]
+foreignNames = [a for (i, n, a) in bpForeign.all_invokes if n == "setVehicleInfo"]
+check("Fremder verbuendeter Zug: kein eigener Name", not foreignNames)
+check("Fremder verbuendeter Zug: isOwnSquad=False", not foreignInfo['isOwnSquad'])
+ns["_applyAllNamesVisibility"](bpForeign, True)
+check("Fremder verbuendeter Zug: ally-Modus statt squad-Modus",
+      bpForeign.invoked[-1] == (10, "showVehicleName"))
+g_configParams.squadNames.value = _TeamNamesMode.ALWAYS
+ns["_vehInfo"].pop(10, None)
+
 # ---------------- ZUGMITGLIEDER (Squad) ----------------
 sq_veh = ns["_vehInfo"]
 sq_veh.clear()
@@ -321,7 +350,7 @@ check("Zug mit Alt: weiterhin sichtbar", plugin5.invoked[-1] == (5, "showVehicle
 enemySquadInfo = {'isSquad': True, 'isEnemy': True, 'isOwnSquad': False,
                   'isForeignSquad': True, 'classTag': 'HT-XX',
                   'guiPropsName': 'enemy-squad', 'playerName': 'EnemyPlayer',
-                  'vehicleName': 'EnemyTank'}
+                  'vehicleName': 'EnemyTank', 'squadIndex': 2}
 ns["_vehInfo"][8] = enemySquadInfo
 enemySquadPlugin = FakePlugin()
 enemySquadPlugin._entries = {8: Entry(8, True)}
@@ -340,6 +369,17 @@ for position, expected in ((_EnemySquadStarPosition.BEFORE, '*EnemyTank'),
     check("Gegnerischer Zug Sternposition %s" % position, inv[2] == expected)
 g_configParams.enemySquadStarPosition.value = _EnemySquadStarPosition.AFTER
 
+for position, expected in ((_EnemySquadStarPosition.NUMBER_BEFORE, u'\u00b2EnemyTank'),
+                           (_EnemySquadStarPosition.NUMBER_BOTH, u'\u00b2EnemyTank\u00b2'),
+                           (_EnemySquadStarPosition.NUMBER_AFTER, u'EnemyTank\u00b2')):
+    g_configParams.enemySquadStarPosition.value = position
+    enemySquadPlugin.invoked = []
+    enemySquadPlugin.all_invokes = []
+    ns["_applySquadNames"](enemySquadPlugin, True)
+    inv = [a for (i, n, a) in enemySquadPlugin.all_invokes if n == "setVehicleInfo"][-1]
+    check("Gegnerischer Zug Zugnummerposition %s" % position, inv[2] == expected)
+g_configParams.enemySquadStarPosition.value = _EnemySquadStarPosition.AFTER
+
 # Stern-Fallback: bei ausgeblendeter Bezeichnung einzelnes Sternchen
 g_configParams.enemySquadStarOnly.value = True
 g_configParams.enemyNames.value = _TeamNamesMode.SHOW_ON_ALT
@@ -350,6 +390,16 @@ starInv = [a for (i, n, a) in starOnlyPlugin.all_invokes if n == "setVehicleInfo
 check("Stern-Fallback: Name ist nur '*'", starInv[2] == "*")
 check("Stern-Fallback: trotz show-on-alt ohne Alt sichtbar",
       starOnlyPlugin.invoked[-1] == (8, "showVehicleName"))
+# Auch der ausgewaehlte Zugnummern-Marker wird allein angezeigt.
+g_configParams.enemySquadStarPosition.value = _EnemySquadStarPosition.NUMBER_BEFORE
+numberFallbackPlugin = FakePlugin()
+numberFallbackPlugin._entries = {8: Entry(8, True)}
+ns["_applySquadNames"](numberFallbackPlugin, False)
+numberFallbackInv = [a for (i, n, a) in numberFallbackPlugin.all_invokes
+                      if n == "setVehicleInfo"][-1]
+check("Stern-Fallback mit Zugnummer: hochgestellte Nummer allein",
+      numberFallbackInv[2] == u'\u00b2')
+g_configParams.enemySquadStarPosition.value = _EnemySquadStarPosition.AFTER
 # Bezeichnung sichtbar -> normale Markierung, kein einzelnes Sternchen
 starVisiblePlugin = FakePlugin()
 starVisiblePlugin._entries = {8: Entry(8, True)}
@@ -372,9 +422,9 @@ g_configParams.enemySquadStarOnly.value = True
 starNoMarkPlugin = FakePlugin()
 starNoMarkPlugin._entries = {8: Entry(8, True)}
 ns["_applySquadNames"](starNoMarkPlugin, False)
-starNoMarkInv = [a for (i, n, a) in starNoMarkPlugin.all_invokes if n == "setVehicleInfo"][-1]
-check("Ohne Markierung: kein Stern (Bezeichnung ohne Stern)",
-      starNoMarkInv[2] == "EnemyTank")
+check("Ohne Markierung: kein eigener Markierungsname",
+      not [a for (i, n, a) in starNoMarkPlugin.all_invokes if n == "setVehicleInfo"])
+ns["_applyAllNamesVisibility"](starNoMarkPlugin, False)
 check("Ohne Markierung: ausgeblendete Bezeichnung bleibt versteckt",
       starNoMarkPlugin.invoked[-1] == (8, "hideVehicleName"))
 g_configParams.markEnemySquads.value = True
@@ -405,20 +455,24 @@ g_configParams.enemyNames.value = _TeamNamesMode.HIDE_ON_ALT
 # _patched_setVehicleInfo: gegnerischer Zug erscheint neu (show-on-alt, ohne Alt)
 g_configParams.enemySquadStarOnly.value = True
 g_configParams.enemyNames.value = _TeamNamesMode.SHOW_ON_ALT
+g_configParams.enemySquadStarPosition.value = _EnemySquadStarPosition.NUMBER_BEFORE
 bpSqF = FakePlugin()
 eF = Entry(8, True)
 vF = _t.SimpleNamespace(
     isSquadMan=lambda: True, vehicleType=_t.SimpleNamespace(classTag='HT-XX'),
-    player=_t.SimpleNamespace(name='EnemyPlayer'), vehicleName='EnemyTank')
+    player=_t.SimpleNamespace(name='EnemyPlayer'), vehicleName='EnemyTank',
+    squadIndex=2)
 swF = _t.MethodType(ns["_patched_setVehicleInfo"], bpSqF)
 ns["_altDown"] = False
 swF(8, eF, vF, _t.SimpleNamespace(isFriend=False, name='enemy'))
 invF = [a for (i, n, a) in bpSqF.all_invokes if n == "setVehicleInfo"][-1]
-check("setVehicleInfo gegn. Zug: Stern-Fallback '*'", invF[2] == "*")
+check("setVehicleInfo gegn. Zug: Nummern-Fallback hochgestellt",
+      invF[2] == u'\u00b2')
 check("setVehicleInfo gegn. Zug: sichtbar",
       (8, "showVehicleName") in bpSqF.invoked)
 g_configParams.enemySquadStarOnly.value = False
 g_configParams.enemyNames.value = _TeamNamesMode.HIDE_ON_ALT
+g_configParams.enemySquadStarPosition.value = _EnemySquadStarPosition.AFTER
 ns["_vehInfo"].pop(8, None)
 
 # Squad-names Modus "always" (Standard): ohne Alt Spielername, mit Alt Fahrzeugname

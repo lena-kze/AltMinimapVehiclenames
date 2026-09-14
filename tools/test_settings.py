@@ -244,7 +244,7 @@ check("enemy-names msa never = 3", enemy.toMsaValue("never") == 3)
 check("enemy-names fromMsa(2) = always", same(enemy.fromMsaValue(2), "always"))
 check("enemy-squad-star-position options",
       [o.value for o in g_configParams.enemySquadStarPosition.options]
-      == ["before", "both", "after"])
+      == ["before", "both", "after", "number-before", "number-both", "number-after"])
 check("enabled jsonValue True -> 'true'", same(g_configParams.enabled.jsonValue, "true"))
 g_configParams.enabled.jsonValue = "false"
 check("enabled jsonValue 'false' setzt value False",
@@ -281,7 +281,7 @@ d2 = config_file.g_configFiles.config.loadConfigDict()
 check("Roundtrip write/load: enemy-names", same(d2.get("enemy-names"), "always"))
 
 # ----------------------------------------------------------------------
-# 6) Migrations: V1 -> V2 -> V3 -> V4 -> V5 -> V6
+# 6) Migrations: V1 -> V2 -> V3 -> V4 -> V5 -> V6 -> V7
 # ----------------------------------------------------------------------
 legacy = {
     "enabled": True,
@@ -296,8 +296,8 @@ migrations.performConfigMigrations()
 d_legacy = config_file.g_configFiles.config.loadConfigDict()
 check("Migration V1->V3: squad-names default -> always",
       d_legacy.get("squad-names") == "always")
-check("Migration V1->V6: __version__ = 6",
-      d_legacy.get("__version__") == migrations.ConfigVersion.V6)
+check("Migration V1->V7: __version__ = 7",
+      d_legacy.get("__version__") == migrations.ConfigVersion.V7)
 check("Migration V1->V3: squad-names-no-alt/alt Standard",
       d_legacy.get("squad-names-no-alt") == "username"
        and d_legacy.get("squad-names-alt") == "vehicle")
@@ -305,12 +305,14 @@ check("Migration V3->V4: Platoon-Markierungen aktiv",
       d_legacy.get("mark-enemy-squads") is True)
 check("Migration V5->V6: Nur-Sternchen inaktiv",
       d_legacy.get("enemy-squad-star-only") is False)
+check("Migration V6->V7: Sternposition Standard",
+      d_legacy.get("enemy-squad-star-position") == "after")
 check("Migration V1->V3: uebrige Werte unveraendert",
       d_legacy.get("enemy-names") == "always"
        and d_legacy.get("ally-names") == "show-on-alt")
 second = dict(d_legacy)
 migrations.performConfigMigrations()
-check("Migration idempotent (V6 bleibt)", 
+check("Migration idempotent (V7 bleibt)",
       config_file.g_configFiles.config.loadConfigDict() == second)
 check("isVersion(V1, 1) True",
       migrations.isVersion({"__version__": 1}, migrations.ConfigVersion.V1))
@@ -426,7 +428,7 @@ check("modDisplayName", same(msa_support.modDisplayName, "AltMinimapVehiclenames
 credits = [p for p in modal["column1"] if p.get("type") == "Label"][-1]
 check("Credits ohne Regenbogen", credits["text"] == "Von Lena_Kze in Deutschland gemacht. <3")
 check("Gegnerische-Züge-Beschriftung",
-      same(Tr.MARK_ENEMY_SQUADS_HEADER, "Gegnerische Züge auf Minimap mit * markieren"))
+      same(Tr.MARK_ENEMY_SQUADS_HEADER, "Gegnerische Züge auf der Minimap markieren"))
 check("Template enabled default True", modal["enabled"] is True)
 
 def dropdown_names():
@@ -440,7 +442,11 @@ check("Platoon-Markierungen vorhanden",
        sorted(p.get("varName") for p in modal["column1"] if p.get("type") == "CheckBox")
        == ["enemy-squad-star-only", "mark-enemy-squads"])
 check("Sternposition-Dropdown vorhanden",
-      [p.get("varName") for p in modal["column1"] if p.get("type") == "Dropdown"].count("enemy-squad-star-position") == 1)
+       [p.get("varName") for p in modal["column1"] if p.get("type") == "Dropdown"].count("enemy-squad-star-position") == 1)
+check("Gegner-Zug-Markierung: Stern und Zugnummer",
+       [o["label"] for o in dropdown("enemy-squad-star-position")["options"]]
+       == ["*Bezeichnung", "*Bezeichnung*", "Bezeichnung*",
+           "¹Bezeichnung", "¹Bezeichnung¹", "Bezeichnung¹"])
 check("enemy-names 4 Optionen (DE)",
       [o["label"] for o in dropdown("enemy-names")["options"]]
       == ["Nur bei ALT", "Bei ALT verstecken", "Immer", "Nie"])

@@ -19,6 +19,9 @@ class EnemySquadStarPosition(object):
     BEFORE = 'before'
     BOTH = 'both'
     AFTER = 'after'
+    NUMBER_BEFORE = 'number-before'
+    NUMBER_BOTH = 'number-both'
+    NUMBER_AFTER = 'number-after'
 
 
 _TEAM_OPTIONS = [
@@ -37,6 +40,9 @@ _ENEMY_SQUAD_STAR_OPTIONS = [
     Option(EnemySquadStarPosition.BEFORE, 0, 'star-position.option.before'),
     Option(EnemySquadStarPosition.BOTH, 1, 'star-position.option.both'),
     Option(EnemySquadStarPosition.AFTER, 2, 'star-position.option.after'),
+    Option(EnemySquadStarPosition.NUMBER_BEFORE, 3, 'platoon-number.option.before'),
+    Option(EnemySquadStarPosition.NUMBER_BOTH, 4, 'platoon-number.option.both'),
+    Option(EnemySquadStarPosition.NUMBER_AFTER, 5, 'platoon-number.option.after'),
 ]
 
 

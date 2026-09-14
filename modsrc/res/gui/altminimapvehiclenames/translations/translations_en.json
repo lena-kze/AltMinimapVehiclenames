@@ -22,26 +22,27 @@
     "- Never - vehicle names are never displayed."
   ],
   "squad-settings.label": "",
-  "squad-names.header": "Squad member labels",
+  "squad-names.header": "Own platoon member labels",
   "squad-names.body": [
-    "Determines when squad members are labeled (same 4 modes as for\n",
+    "Determines when your own platoon members are labeled (same 4 modes as for\n",
     "enemies and allies):\n",
     "- Only on ALT - only while ALT is pressed,\n",
     "- Hide on ALT - visible without ALT, hidden with ALT,\n",
     "- Always - always visible (default),\n",
-    "- Never - squad members are never labeled.\n\n",
+    "- Never - your own platoon members are never labeled.\n\n",
+    "These settings apply only to your own platoon. Other allies and enemy platoons are not treated as your own platoon members.\n\n",
     "The name shown is chosen in the two dropdowns below:\n",
     "'Without ALT' and 'With ALT' - player name or vehicle name."
   ],
-  "squad-names-no-alt.header": "Squad member label variable Without ALT",
+  "squad-names-no-alt.header": "Own platoon member label variable Without ALT",
   "squad-names-no-alt.body": [
-    "Name shown for squad members while ALT is not pressed:\n",
+    "Name shown for your own platoon members while ALT is not pressed:\n",
     "- Username - the player name (default),\n",
     "- Vehicle - the vehicle name."
   ],
-  "squad-names-alt.header": "Squad member label variable With ALT key",
+  "squad-names-alt.header": "Own platoon member label variable With ALT key",
   "squad-names-alt.body": [
-    "Name shown for squad members while ALT is pressed:\n",
+    "Name shown for your own platoon members while ALT is pressed:\n",
     "- Username - the player name,\n",
     "- Vehicle - the vehicle name (default)."
   ],
@@ -54,18 +55,21 @@
   "star-position.option.before": "*Name",
   "star-position.option.both": "*Name*",
   "star-position.option.after": "Name*",
-  "mark-enemy-squads.header": "Mark enemy platoons",
+  "platoon-number.option.before": "¹Name",
+  "platoon-number.option.both": "¹Name¹",
+  "platoon-number.option.after": "Name¹",
+  "mark-enemy-squads.header": "Mark enemy platoons on the minimap",
   "mark-enemy-squads.body": [
-    "Marks platoon members on the red team with a star. You can choose the star position in the dropdown below."
+    "Marks detected enemy platoon members on the minimap with either a star or a superscript platoon number. Choose the marker and its position in the dropdown below."
   ],
-  "enemy-squad-star-position.header": "Enemy platoon star position",
+  "enemy-squad-star-position.header": "Enemy platoon marker and position",
   "enemy-squad-star-position.body": [
-    "Controls where the star is displayed on enemy platoon vehicle names."
+    "Chooses between a star and a superscript platoon number for detected enemy platoons, and places it before, on both sides, or after the vehicle name. The number matches the team-list number."
   ],
-  "enemy-squad-star-only.header": "Platoon star also when labels hidden",
+  "enemy-squad-star-only.header": "Platoon marker also when labels hidden",
   "enemy-squad-star-only.body": [
-    "Keeps the star visible for enemy platoon members even while their label is hidden by the mode - e.g. while ALT is pressed.\n",
-    "Requires 'Mark enemy platoons'. Only relevant for 'Only on ALT' or 'Hide on ALT'; unnecessary with 'Always', with 'Never' the stars stay hidden too."
+    "Keeps the selected platoon marker visible for detected enemy platoon members even while their vehicle label is hidden by the enemy mode - e.g. while ALT is pressed.\n",
+    "Requires the marker above. Only relevant for 'Only on ALT' or 'Hide on ALT'; unnecessary with 'Always', with 'Never' the markers stay hidden too."
   ],
   "credits.label": "Von Lena_Kze in Deutschland gemacht. <3"
 }

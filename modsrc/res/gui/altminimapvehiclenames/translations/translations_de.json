@@ -22,27 +22,28 @@
     "- Nie - Fahrzeugnamen werden nie angezeigt."
   ],
   "squad-settings.label": "",
-  "squad-names.header": "Zugmitglied Bezeichnungen",
+  "squad-names.header": "Eigene Zugmitglied-Bezeichnungen",
   "squad-names.body": [
-    "Legt fest, wann Zugmitglieder beschriftet werden (gleiche 4 Modi wie bei\n",
+    "Legt fest, wann die Bezeichnungen deiner eigenen Zugmitglieder angezeigt werden (gleiche 4 Modi wie bei\n",
     "Feinden und Verbündeten):\n",
     "- Nur bei ALT - nur bei gedrückter ALT-Taste,\n",
     "- Bei ALT verstecken - ohne Alt sichtbar, mit Alt ausgeblendet,\n",
     "- Immer - immer sichtbar (Standard),\n",
-    "- Nie - Zugmitglieder werden nie beschriftet.\n\n",
+    "- Nie - eigene Zugmitglieder werden nie beschriftet.\n\n",
+    "Diese Einstellungen gelten nur für deinen eigenen Zug. Andere Verbündete und gegnerische Züge werden damit nicht als eigene Zugmitglieder behandelt.\n\n",
     "Welcher Name angezeigt wird, wählst du in den zwei Dropdowns darunter: \n",
     "'Ohne ALT' und 'Mit ALT' - jeweils Spielername oder Fahrzeugbezeichnung."
   ],
-  "squad-names-no-alt.header": "Zugmitgliedsbezeichnungsvariable Ohne ALT",
+  "squad-names-no-alt.header": "Eigene Zugmitgliedsbezeichnung Ohne ALT",
   "squad-names-no-alt.body": [
-    "Welcher Name für Zugmitglieder angezeigt wird, solange ALT nicht \n",
+    "Welcher Name für deine eigenen Zugmitglieder angezeigt wird, solange ALT nicht \n",
     "gedrückt ist:\n",
     "- Username - der Spielername (Standard),\n",
     "- Fahrzeugbezeichnung - der Fahrzeugname."
   ],
-  "squad-names-alt.header": "Zugmitgliedsbezeichnungsvariable Mit ALT Taste",
+  "squad-names-alt.header": "Eigene Zugmitgliedsbezeichnung Mit ALT-Taste",
   "squad-names-alt.body": [
-    "Welcher Name für Zugmitglieder angezeigt wird, während ALT gedrückt ist:\n",
+    "Welcher Name für deine eigenen Zugmitglieder angezeigt wird, während ALT gedrückt ist:\n",
     "- Username - der Spielername,\n",
     "- Fahrzeugbezeichnung - der Fahrzeugname (Standard)."
   ],
@@ -55,18 +56,21 @@
   "star-position.option.before": "*Bezeichnung",
   "star-position.option.both": "*Bezeichnung*",
   "star-position.option.after": "Bezeichnung*",
-  "mark-enemy-squads.header": "Gegnerische Züge auf Minimap mit * markieren",
+  "platoon-number.option.before": "¹Bezeichnung",
+  "platoon-number.option.both": "¹Bezeichnung¹",
+  "platoon-number.option.after": "Bezeichnung¹",
+  "mark-enemy-squads.header": "Gegnerische Züge auf der Minimap markieren",
   "mark-enemy-squads.body": [
-    "Markiert Zugmitglieder im roten Team auf der Minimap mit einem Sternchen. Die Position des Sternchens kannst du im Dropdown darunter einstellen."
+    "Markiert erkannte gegnerische Zugmitglieder auf der Minimap mit einem Sternchen oder der hochgestellten Zugnummer. Die Markierungsart und ihre Position wählst du im Dropdown darunter."
   ],
-  "enemy-squad-star-position.header": "Position der Sternchen bei Gegner-Zügen",
+  "enemy-squad-star-position.header": "Markierung und Position bei Gegner-Zügen",
   "enemy-squad-star-position.body": [
-    "Legt fest, wo das Sternchen bei gegnerischen Zugmitgliedern angezeigt wird."
+    "Wählt für erkannte gegnerische Züge zwischen Sternchen bzw. hochgestellter Zugnummer und legt die Position vor, beidseitig oder hinter der Fahrzeugbezeichnung fest. Die Zugnummer entspricht der Nummer aus der Teamliste."
   ],
-  "enemy-squad-star-only.header": "Zug-Sternchen auch bei ausgeblendeten Bezeichnungen",
+  "enemy-squad-star-only.header": "Zugmarkierung bei ausgeblendeten Bezeichnungen",
   "enemy-squad-star-only.body": [
-    "Zeigt das Sternchen für gegnerische Zugmitglieder auch dann, wenn ihre Bezeichnung laut Modus gerade ausgeblendet ist – z. B. bei gedrückter ALT-Taste.\n",
-    "Erfordert die Markierung „Gegnerische Züge auf Minimap mit * markieren“. Sinnvoll nur bei den Modi „Nur bei ALT“ oder „Bei ALT verstecken“; bei „Immer“ unnötig, bei „Nie“ bleiben auch die Sternchen ausgeblendet."
+    "Zeigt die gewählte Zugmarkierung für erkannte gegnerische Zugmitglieder auch dann, wenn ihre Fahrzeugbezeichnung laut Feind-Modus gerade ausgeblendet ist – z. B. bei gedrückter ALT-Taste.\n",
+    "Erfordert die Markierung oben. Sinnvoll nur bei „Nur bei ALT“ oder „Bei ALT verstecken“; bei „Immer“ ist sie unnötig, bei „Nie“ bleiben auch die Markierungen ausgeblendet."
   ],
   "credits.label": "Von Lena_Kze in Deutschland gemacht. <3"
 }

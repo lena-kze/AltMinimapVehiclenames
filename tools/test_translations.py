@@ -75,22 +75,25 @@ check("option.vehicle DE == 'Fahrzeugbezeichnung'",
 check("option.username EN == 'Username'", en.get("option.username") == "Username")
 check("option.vehicle EN == 'Vehicle'", en.get("option.vehicle") == "Vehicle")
 check("squad-names-no-alt.header DE",
-      de.get("squad-names-no-alt.header") == "Zugmitgliedsbezeichnungsvariable Ohne ALT")
+      de.get("squad-names-no-alt.header") == "Eigene Zugmitgliedsbezeichnung Ohne ALT")
 check("squad-names-alt.header DE",
-      de.get("squad-names-alt.header") == "Zugmitgliedsbezeichnungsvariable Mit ALT Taste")
+      de.get("squad-names-alt.header") == "Eigene Zugmitgliedsbezeichnung Mit ALT-Taste")
 check("squad-names-no-alt.header EN",
-      en.get("squad-names-no-alt.header") == "Squad member label variable Without ALT")
+      en.get("squad-names-no-alt.header") == "Own platoon member label variable Without ALT")
 check("squad-names-alt.header EN",
-      en.get("squad-names-alt.header") == "Squad member label variable With ALT key")
+      en.get("squad-names-alt.header") == "Own platoon member label variable With ALT key")
 check("credits DE", de.get("credits.label") == "Von Lena_Kze in Deutschland gemacht. <3")
-check("mark-enemy-squads DE", de.get("mark-enemy-squads.header") == "Gegnerische Züge auf Minimap mit * markieren")
+check("mark-enemy-squads DE", de.get("mark-enemy-squads.header") == "Gegnerische Züge auf der Minimap markieren")
 check("enemy-squad-star-only DE",
-      de.get("enemy-squad-star-only.header") == "Zug-Sternchen auch bei ausgeblendeten Bezeichnungen")
+      de.get("enemy-squad-star-only.header") == "Zugmarkierung bei ausgeblendeten Bezeichnungen")
 check("enemy-squad-star-only EN",
-      en.get("enemy-squad-star-only.header") == "Platoon star also when labels hidden")
+      en.get("enemy-squad-star-only.header") == "Platoon marker also when labels hidden")
 check("star-position options DE",
-      [de.get("star-position.option.before"), de.get("star-position.option.both"),
-      de.get("star-position.option.after")] == ["*Bezeichnung", "*Bezeichnung*", "Bezeichnung*"])
+       [de.get("star-position.option.before"), de.get("star-position.option.both"),
+       de.get("star-position.option.after")] == ["*Bezeichnung", "*Bezeichnung*", "Bezeichnung*"])
+check("platoon-number options DE",
+      [de.get("platoon-number.option.before"), de.get("platoon-number.option.both"),
+       de.get("platoon-number.option.after")] == ["¹Bezeichnung", "¹Bezeichnung¹", "Bezeichnung¹"])
 
 print("")
 if fails:

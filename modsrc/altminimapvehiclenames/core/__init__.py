@@ -14,6 +14,19 @@ _logger.setLevel(logging.INFO)
 
 _TAG = '[AltMinimapVehiclenames] '
 
+_SUPERSCRIPT_DIGITS = {
+    '0': u'\u2070',
+    '1': u'\u00b9',
+    '2': u'\u00b2',
+    '3': u'\u00b3',
+    '4': u'\u2074',
+    '5': u'\u2075',
+    '6': u'\u2076',
+    '7': u'\u2077',
+    '8': u'\u2078',
+    '9': u'\u2079',
+}
+
 _ArenaVehiclesPlugin = None
 _altDown = False
 _resetDone = False
@@ -59,12 +72,15 @@ def _squadNameContent(isDown):
 def _squadDisplayedName(info, isDown):
     if info.get('isForeignSquad'):
         if info.get('isEnemy') and g_configParams.markEnemySquads():
+            marker = _enemySquadMarker(info)
             position = g_configParams.enemySquadStarPosition()
-            if position == EnemySquadStarPosition.BEFORE:
-                return '*' + info['vehicleName']
-            if position == EnemySquadStarPosition.BOTH:
-                return '*' + info['vehicleName'] + '*'
-            return info['vehicleName'] + '*'
+            if position in (EnemySquadStarPosition.BEFORE,
+                            EnemySquadStarPosition.NUMBER_BEFORE):
+                return marker + info['vehicleName']
+            if position in (EnemySquadStarPosition.BOTH,
+                            EnemySquadStarPosition.NUMBER_BOTH):
+                return marker + info['vehicleName'] + marker
+            return info['vehicleName'] + marker
         return info['vehicleName']
     if not info.get('isOwnSquad'):
         return info['vehicleName']
@@ -73,10 +89,31 @@ def _squadDisplayedName(info, isDown):
     return info['playerName']
 
 
-def _enemySquadStarFallbackVisible(entry, info, altPressed):
-    """True, wenn fuer diesen gegnerischen Zug-Eintrag ein einzelnes
-    Sternchen angezeigt wird, obwohl die Bezeichnung laut Feind-Modus und
-    Alt-Status gerade ausgeblendet waere.
+def _superscriptNumber(number):
+    try:
+        digits = str(int(number))
+    except (TypeError, ValueError):
+        return ''
+    if not digits or digits.startswith('-'):
+        return ''
+    return u''.join(_SUPERSCRIPT_DIGITS.get(digit, digit) for digit in digits)
+
+
+def _enemySquadMarker(info):
+    position = g_configParams.enemySquadStarPosition()
+    if position in (EnemySquadStarPosition.NUMBER_BEFORE,
+                    EnemySquadStarPosition.NUMBER_BOTH,
+                    EnemySquadStarPosition.NUMBER_AFTER):
+        marker = _superscriptNumber(info.get('squadIndex', 0))
+        if marker:
+            return marker
+    return '*'
+
+
+def _enemySquadMarkerFallbackVisible(entry, info, altPressed):
+    """True, wenn fuer diesen gegnerischen Zug-Eintrag nur der Marker
+    angezeigt wird, obwohl die Bezeichnung laut Feind-Modus und Alt-Status
+    gerade ausgeblendet waere.
 
     Sinnvoll nur bei den ALT-abhaengigen Modi: Bei "always" wird die
     Bezeichnung ohnehin angezeigt, bei "never" sollen auch die Sternchen
@@ -97,14 +134,14 @@ def _enemySquadStarFallbackVisible(entry, info, altPressed):
 
 
 def _enemySquadDisplayedName(entry, info, isDown):
-    """Label fuer gegnerische Zugmitglieder inkl. Sternchen-Fallback.
+    """Label fuer gegnerische Zugmitglieder inkl. Marker-Fallback.
 
     Ist die Bezeichnung laut Modus/Alt gerade ausgeblendet und der
-    Nur-Sternchen-Fallback aktiv, wird ein einzelnes Sternchen angezeigt;
-    sonst die normale Bezeichnung (ggf. mit Stern-Markierung).
+    Marker-Fallback aktiv, wird nur der gewaehlte Marker angezeigt; sonst
+    die normale Bezeichnung (ggf. mit Marker).
     """
-    if _enemySquadStarFallbackVisible(entry, info, isDown):
-        return '*'
+    if _enemySquadMarkerFallbackVisible(entry, info, isDown):
+        return _enemySquadMarker(info)
     return _squadDisplayedName(info, isDown)
 
 
@@ -113,10 +150,10 @@ def _enemySquadDisplayedName(entry, info, isDown):
 # ---------------------------------------------------------------------------
 def _modeFor(entry, info=None):
     """Liefert den konfigurierten Anzeige-Modus fuer einen Entry."""
+    if info is not None and info.get('isOwnSquad'):
+        return _squadMode()
     if entry.isEnemy():
         return _enemyMode()
-    if info is not None and info.get('isSquad'):
-        return _squadMode()
     return _allyMode()
 
 
@@ -145,7 +182,7 @@ def _applyEntryNameVisibility(plugin, entry, altPressed, info=None):
     Der eigentliche Namens-INHALT fuer Zugmitglieder (Spielername/
     Fahrzeugname) wird separat in _applySquadNames gesteuert.
     """
-    if _enemySquadStarFallbackVisible(entry, info, altPressed):
+    if _enemySquadMarkerFallbackVisible(entry, info, altPressed):
         plugin._invoke(entry.getID(), 'showVehicleName')
         return
     mode = _modeFor(entry, info)
@@ -167,13 +204,16 @@ def _applyAllNamesVisibility(plugin, altPressed):
 
 
 def _applySquadNames(plugin, isDown):
-    """Setzt fuer alle Zugmitglieder den anzuzeigenden Namen neu.
+    """Setzt fuer den eigenen Zug und markierte Gegner den Namen neu.
 
-    Sichtbarkeit folgt dem squad-names Modus (wie bei Feind/Ally):
+    Fuer den eigenen Zug folgt die Sichtbarkeit dem squad-names Modus:
       show-on-alt -> nur bei Alt sichtbar
       hide-on-alt -> nur ohne Alt sichtbar
       always      -> immer sichtbar
       never       -> versteckt
+
+    Andere verbuendete Zuege bleiben unter der ally-names-Regel; gegnerische
+    Zuege werden nur mit Fahrzeugname und optionalem Marker behandelt.
 
     Der Namens-INHALT wird separat gewaehlt:
       squad-names-no-alt -> Name ohne Alt (username/vehicle)
@@ -189,7 +229,7 @@ def _applySquadNames(plugin, isDown):
             continue
         try:
             if info.get('isForeignSquad'):
-                if g_configParams.markEnemySquads() or g_configParams.enemySquadStarOnly():
+                if info.get('isEnemy') and g_configParams.markEnemySquads():
                     plugin._invoke(entry.getID(), 'setVehicleInfo', vehicleID,
                                  info['classTag'], _enemySquadDisplayedName(entry, info, isDown),
                                  info['guiPropsName'], '')
@@ -224,6 +264,24 @@ def _entryVehicleID(plugin, entry):
         if candidate is entry:
             return vehicleID
     return None
+
+
+def _isOwnSquad(plugin, vehicleID, entry, isSquad):
+    """Nutze die Arena-DP-Zuordnung statt des allgemeinen Squad-Flags.
+
+    vInfo.isSquadMan() markiert jeden erkannten Zug im Gefecht. Die Arena-DP
+    filtert zusaetzlich auf eigenes Team und eigene prebattleID.
+    """
+    if not isSquad or entry.isEnemy():
+        return False
+    arenaDP = getattr(plugin, '_arenaDP', None)
+    if arenaDP is None:
+        return False
+    try:
+        return bool(arenaDP.isSquadMan(vehicleID))
+    except Exception:
+        _logger.exception('%s Eigener Zug nicht ermittelbar', _TAG)
+        return False
 
 
 def _applyNameRules(plugin):
@@ -277,20 +335,21 @@ def _patched_setVehicleInfo(self, vehicleID, entry, vInfo, guiProps, isSpotted=F
     try:
         isSquad = bool(vInfo.isSquadMan())
         isEnemy = bool(entry.isEnemy())
+        isOwnSquad = _isOwnSquad(self, vehicleID, entry, isSquad)
         info = {
             'isSquad': isSquad,
             'isEnemy': isEnemy,
-            'isOwnSquad': isSquad and not isEnemy,
-            'isForeignSquad': isSquad and isEnemy,
+            'isOwnSquad': isOwnSquad,
+            'isForeignSquad': isSquad and not isOwnSquad,
             'classTag': vInfo.vehicleType.classTag,
             'guiPropsName': self._getGuiPropsName(guiProps),
             'playerName': _getPlayerName(vInfo),
             'vehicleName': self._getDisplayedName(vInfo),
+            'squadIndex': getattr(vInfo, 'squadIndex', 0),
         }
         _vehInfo[vehicleID] = info
         _applyEntryNameVisibility(self, entry, _altDown, info)
-        if isSquad and isEnemy and (
-                g_configParams.markEnemySquads() or g_configParams.enemySquadStarOnly()):
+        if isSquad and isEnemy and g_configParams.markEnemySquads():
             self._invoke(entry.getID(), 'setVehicleInfo', vehicleID,
                          info['classTag'], _enemySquadDisplayedName(entry, info, _altDown),
                          info['guiPropsName'], '')

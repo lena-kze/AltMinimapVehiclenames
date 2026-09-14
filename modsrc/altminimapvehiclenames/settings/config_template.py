@@ -30,7 +30,7 @@ CONFIG_TEMPLATE = '''{
     // Valid values: ["show-on-alt", "hide-on-alt", "always", "never"]
     // Default value: "always"
     //
-    // Controls display of squad (platoon) member names:
+    // Controls display of your own squad (platoon) member names:
     // - "show-on-alt"  - visible only while ALT is pressed,
     // - "hide-on-alt"  - visible, hidden while ALT is pressed,
     // - "always"       - always visible,
@@ -40,7 +40,7 @@ CONFIG_TEMPLATE = '''{
     // Valid values: ["username", "vehicle"]
     // Default value: "username"
     //
-    // Name shown for squad members while ALT is NOT pressed:
+    // Name shown for your own squad members while ALT is NOT pressed:
     // - "username"  - player name,
     // - "vehicle"   - vehicle name.
     "squad-names-no-alt": %(squad-names-no-alt)s,
@@ -48,27 +48,29 @@ CONFIG_TEMPLATE = '''{
     // Valid values: ["username", "vehicle"]
     // Default value: "vehicle"
     //
-    // Name shown for squad members while ALT is pressed:
+    // Name shown for your own squad members while ALT is pressed:
     // - "username"  - player name,
     // - "vehicle"   - vehicle name.
     "squad-names-alt": %(squad-names-alt)s,
 
     // Valid values: true/false (default: true)
-    // Mark platoon members from the enemy team with a '*' after the vehicle name.
+    // Mark detected enemy platoon members with a star or a platoon number,
+    // according to the marker-position setting below.
     "mark-enemy-squads": %(mark-enemy-squads)s,
 
-    // Valid values: ["before", "both", "after"] (default: "after")
-    // Controls the position of the star on enemy platoon vehicle names.
+    // Valid values: ["before", "both", "after", "number-before",
+    // "number-both", "number-after"] (default: "after")
+    // Controls marker type and position on enemy platoon vehicle names.
     "enemy-squad-star-position": %(enemy-squad-star-position)s,
 
     // Valid values: true/false (default: false)
     //
-    // Keeps the enemy platoon star visible on the minimap even while the
-    // enemy vehicle names are hidden by the enemy-names mode (only relevant
-    // for "show-on-alt"/"hide-on-alt"). Requires "mark-enemy-squads".
+    // Keeps the selected enemy platoon marker visible on the minimap even
+    // while the enemy vehicle names are hidden by the enemy-names mode (only
+    // relevant for "show-on-alt"/"hide-on-alt"). Requires "mark-enemy-squads".
     "enemy-squad-star-only": %(enemy-squad-star-only)s,
 
     // DO NOT touch "__version__" field
-    "__version__": 6
+    "__version__": 7
 }
 '''

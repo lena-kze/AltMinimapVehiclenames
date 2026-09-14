@@ -24,8 +24,10 @@ Stand: 2026-09-11
   (`094eb9c`, Tag `v1.1.3-nightly`) historisch weiter.
 - Ein neues Nightly-Build wird also auf `nightly` gesetzt, nicht direkt auf master.
 
-## Stable 1.1.3 / 1.1.4
+## Stable 1.1.3 / 1.1.4 / 1.2.0
 
 - Enthält das Gefechtslog-Feature NICHT (Verhalten wie vor 1.1.2).
-- 1.1.4: neue Option "Zug-Sternchen auch bei ausgeblendeten Bezeichnungen"
+- 1.1.4: Option "Zug-Sternchen auch bei ausgeblendeten Bezeichnungen"
   (potentiell kombinierbar mit dem späteren Battle-Log-Nightly).
+- 1.2.0: eigener Zug wird anhand der Arena-DP erkannt; gegnerische
+  Zugmarkierungen können zusätzlich als hochgestellte Zugnummer erscheinen.

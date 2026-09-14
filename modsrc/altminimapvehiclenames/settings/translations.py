@@ -142,4 +142,7 @@ class Tr(object):
     STAR_POSITION_OPTION_BEFORE = TranslationElement('star-position.option.before')
     STAR_POSITION_OPTION_BOTH = TranslationElement('star-position.option.both')
     STAR_POSITION_OPTION_AFTER = TranslationElement('star-position.option.after')
+    PLATOON_NUMBER_OPTION_BEFORE = TranslationElement('platoon-number.option.before')
+    PLATOON_NUMBER_OPTION_BOTH = TranslationElement('platoon-number.option.both')
+    PLATOON_NUMBER_OPTION_AFTER = TranslationElement('platoon-number.option.after')
     CREDITS_LABEL = TranslationElement('credits.label')
